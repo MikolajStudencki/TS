@@ -1,0 +1,9 @@
+main.c:78:5:int main()	1
+main.c:125:6:void SystemClock_Config()	3
+main.c:171:13:void MX_ADC1_Init()	3
+main.c:223:13:void MX_I2C1_Init()	2
+main.c:257:13:void MX_I2S3_Init()	2
+main.c:291:13:void MX_SPI1_Init()	2
+main.c:329:13:void MX_GPIO_Init()	1
+main.c:454:6:void Error_Handler()	1
+mainCpp.cpp:3:6:void mainCpp()	1
