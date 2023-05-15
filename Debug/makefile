@@ -64,8 +64,8 @@ all: main-build
 main-build: TEMP_SENS.elf secondary-outputs
 
 # Tool invocations
-TEMP_SENS.elf TEMP_SENS.map: $(OBJS) $(USER_OBJS) C:\Users\Baradosso\Documents\Git\TS-MH\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "TEMP_SENS.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Baradosso\Documents\Git\TS-MH\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TEMP_SENS.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+TEMP_SENS.elf TEMP_SENS.map: $(OBJS) $(USER_OBJS) F:\GitThings\TS-DS\STM32F407VGTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "TEMP_SENS.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"F:\GitThings\TS-DS\STM32F407VGTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="TEMP_SENS.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
