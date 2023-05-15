@@ -139,12 +139,13 @@ int main(void)
 		HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
 
 		uint32_t value = HAL_ADC_GetValue(&hadc1);
-		float voltage = 100.0 - ((value / 1024.0) * 49.0);
+		float temp = 100.0 - ((value / 1024.0) * 49.0);
+		Lcd_clear(&lcd);
 
 		Lcd_cursor(&lcd, 0, 0);
-		Lcd_string(&lcd, "TEMPERATURA ");
+		Lcd_string(&lcd, "TEMPERATURA:");
 
-		Lcd_int(&lcd, voltage);
+		Lcd_float(&lcd, temp);
 		HAL_Delay(500);
 	}
     /* USER CODE END WHILE */
