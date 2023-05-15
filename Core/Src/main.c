@@ -52,7 +52,19 @@ SPI_HandleTypeDef hspi1;
 TIM_HandleTypeDef htim11;
 
 /* USER CODE BEGIN PV */
+Lcd_PortType ports[] = {
+		LCD_DB4_GPIO_Port,
+		LCD_DB5_GPIO_Port,
+		LCD_DB6_GPIO_Port,
+		LCD_DB7_GPIO_Port
+};
 
+Lcd_PinType pins[] = {
+		LCD_DB4_Pin,
+		LCD_DB5_Pin,
+		LCD_DB6_Pin,
+		LCD_DB7_Pin
+};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -109,20 +121,6 @@ int main(void)
 	MX_TIM11_Init();
 	/* USER CODE BEGIN 2 */
 
-	Lcd_PortType ports[] = {
-			LCD_DB4_GPIO_Port,
-			LCD_DB5_GPIO_Port,
-			LCD_DB6_GPIO_Port,
-			LCD_DB7_GPIO_Port
-	};
-
-	Lcd_PinType pins[] = {
-			LCD_DB4_Pin,
-			LCD_DB5_Pin,
-			LCD_DB6_Pin,
-			LCD_DB7_Pin
-	};
-
 	Lcd_HandleTypeDef lcd = Lcd_create(
 			ports,
 			pins,
@@ -132,15 +130,23 @@ int main(void)
 			LCD_ENA_Pin,
 			LCD_4_BIT_MODE
 	);
-
-	Lcd_string(&lcd, "4ilo");
-
-	Lcd_cursor(&lcd, 1,6);
-	Lcd_int(&lcd, -500);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
+	while(1) {
+		HAL_ADC_Start(&hadc1);
+		HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+
+		uint32_t value = HAL_ADC_GetValue(&hadc1);
+		float voltage = 100.0 - ((value / 1024.0) * 49.0);
+
+		Lcd_cursor(&lcd, 0, 0);
+		Lcd_string(&lcd, "TEMPERATURA ");
+
+		Lcd_int(&lcd, voltage);
+		HAL_Delay(500);
+	}
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();
 
