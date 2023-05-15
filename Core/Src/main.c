@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "lcd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -49,6 +49,8 @@ I2S_HandleTypeDef hi2s3;
 
 SPI_HandleTypeDef hspi1;
 
+TIM_HandleTypeDef htim11;
+
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -60,10 +62,10 @@ static void MX_ADC1_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2S3_Init(void);
 static void MX_SPI1_Init(void);
+static void MX_TIM11_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
-void mainCpp();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -77,45 +79,74 @@ void mainCpp();
   */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
+	/* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
+	/* USER CODE END 1 */
 
-  /* MCU Configuration--------------------------------------------------------*/
+	/* MCU Configuration--------------------------------------------------------*/
 
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
+	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+	HAL_Init();
 
-  /* USER CODE BEGIN Init */
+	/* USER CODE BEGIN Init */
 
-  /* USER CODE END Init */
+	/* USER CODE END Init */
 
-  /* Configure the system clock */
-  SystemClock_Config();
+	/* Configure the system clock */
+	SystemClock_Config();
 
-  /* USER CODE BEGIN SysInit */
+	/* USER CODE BEGIN SysInit */
 
-  /* USER CODE END SysInit */
+	/* USER CODE END SysInit */
 
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_ADC1_Init();
-  MX_I2C1_Init();
-  MX_I2S3_Init();
-  MX_SPI1_Init();
-  MX_USB_HOST_Init();
-  /* USER CODE BEGIN 2 */
+	/* Initialize all configured peripherals */
+	MX_GPIO_Init();
+	MX_ADC1_Init();
+	MX_I2C1_Init();
+	MX_I2S3_Init();
+	MX_SPI1_Init();
+	MX_USB_HOST_Init();
+	MX_TIM11_Init();
+	/* USER CODE BEGIN 2 */
 
-  /* USER CODE END 2 */
+	Lcd_PortType ports[] = {
+			LCD_DB4_GPIO_Port,
+			LCD_DB5_GPIO_Port,
+			LCD_DB6_GPIO_Port,
+			LCD_DB7_GPIO_Port
+	};
 
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  mainCpp();
-  /* USER CODE END WHILE */
+	Lcd_PinType pins[] = {
+			LCD_DB4_Pin,
+			LCD_DB5_Pin,
+			LCD_DB6_Pin,
+			LCD_DB7_Pin
+	};
 
-  /* USER CODE BEGIN 3 */
+	Lcd_HandleTypeDef lcd = Lcd_create(
+			ports,
+			pins,
+			LCD_RS_GPIO_Port,
+			LCD_RS_Pin,
+			LCD_ENA_GPIO_Port,
+			LCD_ENA_Pin,
+			LCD_4_BIT_MODE
+	);
 
-  /* USER CODE END 3 */
+	Lcd_string(&lcd, "4ilo");
+
+	Lcd_cursor(&lcd, 1,6);
+	Lcd_int(&lcd, -500);
+	/* USER CODE END 2 */
+
+	/* Infinite loop */
+	/* USER CODE BEGIN WHILE */
+    /* USER CODE END WHILE */
+    MX_USB_HOST_Process();
+
+    /* USER CODE BEGIN 3 */
+
+    /* USER CODE END 3 */
 }
 
 /**
@@ -322,6 +353,37 @@ static void MX_SPI1_Init(void)
 }
 
 /**
+  * @brief TIM11 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM11_Init(void)
+{
+
+  /* USER CODE BEGIN TIM11_Init 0 */
+
+  /* USER CODE END TIM11_Init 0 */
+
+  /* USER CODE BEGIN TIM11_Init 1 */
+
+  /* USER CODE END TIM11_Init 1 */
+  htim11.Instance = TIM11;
+  htim11.Init.Prescaler = 0;
+  htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim11.Init.Period = 65535;
+  htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim11.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim11) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM11_Init 2 */
+
+  /* USER CODE END TIM11_Init 2 */
+
+}
+
+/**
   * @brief GPIO Initialization Function
   * @param None
   * @retval None
@@ -341,8 +403,8 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, CS_I2C_SPI_Pin|DISP_RS_Pin|DISP_RW_Pin|DISP_ENA_Pin
-                          |DISP_DB4_Pin|DISP_DB5_Pin|DISP_DB6_Pin|DISP_DB7_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, CS_I2C_SPI_Pin|LCD_RS_Pin|LCD_RW_Pin|LCD_ENA_Pin
+                          |LCD_DB4_Pin|LCD_DB5_Pin|LCD_DB6_Pin|LCD_DB7_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(OTG_FS_PowerSwitchOn_GPIO_Port, OTG_FS_PowerSwitchOn_Pin, GPIO_PIN_SET);
@@ -354,10 +416,10 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(BTN_DOWN_GPIO_Port, BTN_DOWN_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : CS_I2C_SPI_Pin DISP_RS_Pin DISP_RW_Pin DISP_ENA_Pin
-                           DISP_DB4_Pin DISP_DB5_Pin DISP_DB6_Pin DISP_DB7_Pin */
-  GPIO_InitStruct.Pin = CS_I2C_SPI_Pin|DISP_RS_Pin|DISP_RW_Pin|DISP_ENA_Pin
-                          |DISP_DB4_Pin|DISP_DB5_Pin|DISP_DB6_Pin|DISP_DB7_Pin;
+  /*Configure GPIO pins : CS_I2C_SPI_Pin LCD_RS_Pin LCD_RW_Pin LCD_ENA_Pin
+                           LCD_DB4_Pin LCD_DB5_Pin LCD_DB6_Pin LCD_DB7_Pin */
+  GPIO_InitStruct.Pin = CS_I2C_SPI_Pin|LCD_RS_Pin|LCD_RW_Pin|LCD_ENA_Pin
+                          |LCD_DB4_Pin|LCD_DB5_Pin|LCD_DB6_Pin|LCD_DB7_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
