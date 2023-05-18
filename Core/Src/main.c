@@ -65,6 +65,33 @@ Lcd_PinType pins[] = {
 		LCD_DB6_Pin,
 		LCD_DB7_Pin
 };
+
+uint8_t celsiusChar[] = {
+		0b01000,
+		0b10100,
+		0b01000,
+		0b00111,
+		0b01000,
+		0b01000,
+		0b01000,
+		0b00111
+};
+
+Lcd_HandleTypeDef lcd;
+
+uint32_t value;
+int temperature;
+int alarmTemperature = 36;
+
+char degreeCharacter = 223;
+
+int year = 2023;
+int month = 5;
+int day = 18;
+
+int hour = 14;
+int minute = 30;
+int second = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -78,10 +105,142 @@ static void MX_TIM11_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
+void calcDateTime(void);
+void displayTimeLcd(void);
+void displayDateTimePart(int time);
+int returnDaysByMonth(void);
+
+void displayCurrentTemperature(void);
+void getTemperatureSensorVoltage(void);
+void displayAlarmTemperature(void);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void calcDateTime()
+{
+	second += 1;
+	if (second == 60)
+	{
+		second = 0;
+		minute += 1;
+	}
+
+	if (minute == 60)
+	{
+		minute = 0;
+		hour += 1;
+	}
+
+	if (hour == 24)
+	{
+		hour = 0;
+		day += 1;
+	}
+
+	if (day > returnDaysByMonth())
+	{
+		day = 0;
+		month += 1;
+	}
+
+	if (month > 12)
+	{
+		month = 0;
+		year += 1;
+	}
+}
+
+void displayTimeLcd()
+{
+	Lcd_cursor(&lcd, 0, 6);
+	displayDateTimePart(year);
+	Lcd_string(&lcd, "-");
+
+	displayDateTimePart(month);
+	Lcd_string(&lcd, "-");
+
+	displayDateTimePart(day);
+
+	Lcd_cursor(&lcd, 1, 8);
+	displayDateTimePart(hour);
+	Lcd_string(&lcd, "-");
+
+	displayDateTimePart(minute);
+	Lcd_string(&lcd, "-");
+
+	displayDateTimePart(second);
+}
+
+void displayDateTimePart(int time)
+{
+	if (time < 10)
+	{
+		Lcd_int(&lcd, 0);
+	}
+	Lcd_int(&lcd, time);
+}
+
+int returnDaysByMonth()
+{
+	switch (month)
+	{
+		case 2:
+			if ((year % 4) == 0) {
+				return 29;
+			}
+			return 28;
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+		case 9:
+		case 11:
+			return 31;
+		case 4:
+		case 6:
+		case 8:
+		case 10:
+		case 12:
+		default:
+			return 30;
+	}
+}
+
+void getTemperatureSensorVoltage()
+{
+	HAL_ADC_Start(&hadc1);
+	HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+
+	value = HAL_ADC_GetValue(&hadc1);
+	temperature = 100.0 - ((value / 1024.0) * 49.0);
+}
+
+void displayCurrentTemperature()
+{
+	Lcd_cursor(&lcd, 0, 0);
+	if (temperature < 10)
+	{
+		Lcd_int(&lcd, 0);
+	}
+	Lcd_int(&lcd, (temperature % 100));
+
+	Lcd_string(&lcd, "\x01");
+}
+
+void displayAlarmTemperature()
+{
+	Lcd_cursor(&lcd, 1, 0);
+	if (alarmTemperature < 10)
+	{
+		Lcd_int(&lcd, 0);
+	}
+	Lcd_int(&lcd, (alarmTemperature % 100));
+
+	Lcd_string(&lcd, "\x01");
+	Lcd_string(&lcd, "!");
+}
 
 /* USER CODE END 0 */
 
@@ -120,8 +279,7 @@ int main(void)
 	MX_USB_HOST_Init();
 	MX_TIM11_Init();
 	/* USER CODE BEGIN 2 */
-
-	Lcd_HandleTypeDef lcd = Lcd_create(
+	lcd = Lcd_create(
 			ports,
 			pins,
 			LCD_RS_GPIO_Port,
@@ -130,23 +288,21 @@ int main(void)
 			LCD_ENA_Pin,
 			LCD_4_BIT_MODE
 	);
+
+	Lcd_define_char(&lcd, 1, celsiusChar);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while(1) {
-		HAL_ADC_Start(&hadc1);
-		HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+		getTemperatureSensorVoltage();
+		displayCurrentTemperature();
+		displayAlarmTemperature();
 
-		uint32_t value = HAL_ADC_GetValue(&hadc1);
-		float temp = 100.0 - ((value / 1024.0) * 49.0);
-		Lcd_clear(&lcd);
+		calcDateTime();
+		displayTimeLcd();
 
-		Lcd_cursor(&lcd, 0, 0);
-		Lcd_string(&lcd, "TEMPERATURA:");
-
-		Lcd_float(&lcd, temp);
-		HAL_Delay(500);
+		HAL_Delay(1000);
 	}
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();

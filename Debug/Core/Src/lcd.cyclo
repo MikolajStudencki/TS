@@ -5,7 +5,7 @@ lcd.c:77:6:Lcd_float	1
 lcd.c:88:6:Lcd_string	2
 lcd.c:99:6:Lcd_cursor	1
 lcd.c:113:6:Lcd_clear	1
-lcd.c:117:6:Lcd_define_char	2
-lcd.c:131:6:lcd_write_command	2
-lcd.c:150:6:lcd_write_data	2
-lcd.c:169:6:lcd_write	2
+lcd.c:118:6:Lcd_define_char	2
+lcd.c:133:6:lcd_write_command	2
+lcd.c:152:6:lcd_write_data	2
+lcd.c:171:6:lcd_write	2

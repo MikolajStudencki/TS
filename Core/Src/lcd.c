@@ -77,7 +77,7 @@ void Lcd_int(Lcd_HandleTypeDef * lcd, int number)
 void Lcd_float(Lcd_HandleTypeDef * lcd, float number)
 {
 	char buffer[11];
-	sprintf(buffer, "%f", number);
+	sprintf(buffer, "%.2f", number);
 
 	Lcd_string(lcd, buffer);
 }
@@ -110,16 +110,18 @@ void Lcd_cursor(Lcd_HandleTypeDef * lcd, uint8_t row, uint8_t col)
 /**
  * Clear the screen
  */
-void Lcd_clear(Lcd_HandleTypeDef * lcd) {
+void Lcd_clear(Lcd_HandleTypeDef * lcd)
+{
 	lcd_write_command(lcd, CLEAR_DISPLAY);
 }
 
-void Lcd_define_char(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[]){
+void Lcd_define_char(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[])
+{
 	lcd_write_command(lcd, SETCGRAM_ADDR + (code << 3));
-	for(uint8_t i=0;i<8;++i){
+	for(uint8_t i = 0; i < 8; ++i)
+	{
 		lcd_write_data(lcd, bitmap[i]);
 	}
-
 }
 
 
