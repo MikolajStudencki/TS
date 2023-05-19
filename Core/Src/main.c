@@ -24,6 +24,7 @@
 /* USER CODE BEGIN Includes */
 #include "lcd.h"
 #include "buttons.h"
+#include "datetime.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -85,14 +86,6 @@ int temperature;
 int alarmTemperature = 36;
 
 char degreeCharacter = 223;
-
-int year = 2023;
-int month = 5;
-int day = 18;
-
-int hour = 14;
-int minute = 30;
-int second = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -106,10 +99,6 @@ static void MX_TIM11_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
-void calcDateTime(void);
-void displayTimeLcd(void);
-void displayDateTimePart(int time);
-int returnDaysByMonth(void);
 
 void displayCurrentTemperature(void);
 void getTemperatureSensorVoltage(void);
@@ -119,96 +108,6 @@ void displayAlarmTemperature(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void calcDateTime()
-{
-	second += 1;
-	if (second == 60)
-	{
-		second = 0;
-		minute += 1;
-	}
-
-	if (minute == 60)
-	{
-		minute = 0;
-		hour += 1;
-	}
-
-	if (hour == 24)
-	{
-		hour = 0;
-		day += 1;
-	}
-
-	if (day > returnDaysByMonth())
-	{
-		day = 0;
-		month += 1;
-	}
-
-	if (month > 12)
-	{
-		month = 0;
-		year += 1;
-	}
-}
-
-void displayTimeLcd()
-{
-	Lcd_cursor(&lcd, 0, 6);
-	displayDateTimePart(year);
-	Lcd_string(&lcd, "-");
-
-	displayDateTimePart(month);
-	Lcd_string(&lcd, "-");
-
-	displayDateTimePart(day);
-
-	Lcd_cursor(&lcd, 1, 8);
-	displayDateTimePart(hour);
-	Lcd_string(&lcd, "-");
-
-	displayDateTimePart(minute);
-	Lcd_string(&lcd, "-");
-
-	displayDateTimePart(second);
-}
-
-void displayDateTimePart(int time)
-{
-	if (time < 10)
-	{
-		Lcd_int(&lcd, 0);
-	}
-	Lcd_int(&lcd, time);
-}
-
-int returnDaysByMonth()
-{
-	switch (month)
-	{
-		case 2:
-			if ((year % 4) == 0) {
-				return 29;
-			}
-			return 28;
-		case 1:
-		case 3:
-		case 5:
-		case 7:
-		case 9:
-		case 11:
-			return 31;
-		case 4:
-		case 6:
-		case 8:
-		case 10:
-		case 12:
-		default:
-			return 30;
-	}
-}
-
 void getTemperatureSensorVoltage()
 {
 	HAL_ADC_Start(&hadc1);
@@ -252,36 +151,35 @@ void displayAlarmTemperature()
   */
 int main(void)
 {
-	/* USER CODE BEGIN 1 */
+  /* USER CODE BEGIN 1 */
 
-	/* USER CODE END 1 */
+  /* USER CODE END 1 */
 
-	/* MCU Configuration--------------------------------------------------------*/
+  /* MCU Configuration--------------------------------------------------------*/
 
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
 
-	/* USER CODE BEGIN Init */
+  /* USER CODE BEGIN Init */
 
-	/* USER CODE END Init */
+  /* USER CODE END Init */
 
-	/* Configure the system clock */
-	SystemClock_Config();
+  /* Configure the system clock */
+  SystemClock_Config();
 
-	/* USER CODE BEGIN SysInit */
+  /* USER CODE BEGIN SysInit */
 
-	/* USER CODE END SysInit */
+  /* USER CODE END SysInit */
 
-	/* Initialize all configured peripherals */
-	MX_GPIO_Init();
-	MX_ADC1_Init();
-	MX_I2C1_Init();
-	MX_I2S3_Init();
-	MX_SPI1_Init();
-	MX_USB_HOST_Init();
-	MX_TIM11_Init();
-	/* USER CODE BEGIN 2 */
-	int start_time = HAL_GetTick();
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_ADC1_Init();
+  MX_I2C1_Init();
+  MX_I2S3_Init();
+  MX_SPI1_Init();
+  MX_USB_HOST_Init();
+  MX_TIM11_Init();
+  /* USER CODE BEGIN 2 */
 	lcd = Lcd_create(
 			ports,
 			pins,
@@ -293,36 +191,36 @@ int main(void)
 	);
 
 	Lcd_define_char(&lcd, 1, celsiusChar);
-	/* USER CODE END 2 */
 
-	/* Infinite loop */
-	/* USER CODE BEGIN WHILE */
-	while(1) {
-		int end_time = HAL_GetTick();
+	displayAlarmTemperature();
+
+	dateTimeInit();
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+	while(1)
+	{
+		cycleThroughSecond();
+
 		getTemperatureSensorVoltage();
 		displayCurrentTemperature();
 
-		if(end_time-start_time>=1000){
-			displayAlarmTemperature();
-			calcDateTime();
-			start_time = end_time;
-		}
-		displayTimeLcd();
-		button_pressed(lcd);
-//		if(HAL_GPIO_ReadPin(BTN_LEFT_GPIO_Port, BTN_LEFT_Pin)==GPIO_PIN_RESET){  //Check if button pressed
-//			HAL_GPIO_WritePin(LD3_GPIO_Port,  LD3_Pin,GPIO_PIN_SET);
-//		}else{
-//			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,GPIO_PIN_RESET);	      //Else Led Switch Off
-//		}
+		Lcd_cursor(&lcd, 0, 6);
+		displayDateLcd(&lcd);
 
-//		HAL_Delay(1000);
+		Lcd_cursor(&lcd, 1, 8);
+		displayTimeLcd(&lcd);
+
+		readAllButtonStatuses();
+		displayButtonValue(&lcd);
 	}
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();
 
     /* USER CODE BEGIN 3 */
 
-    /* USER CODE END 3 */
+  /* USER CODE END 3 */
 }
 
 /**
@@ -589,9 +487,6 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOD, LD4_Pin|LD3_Pin|LD5_Pin|LD6_Pin
                           |Audio_RST_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(BTN_DOWN_GPIO_Port, BTN_DOWN_Pin, GPIO_PIN_RESET);
-
   /*Configure GPIO pins : CS_I2C_SPI_Pin LCD_RS_Pin LCD_RW_Pin LCD_ENA_Pin
                            LCD_DB4_Pin LCD_DB5_Pin LCD_DB6_Pin LCD_DB7_Pin */
   GPIO_InitStruct.Pin = CS_I2C_SPI_Pin|LCD_RS_Pin|LCD_RW_Pin|LCD_ENA_Pin
@@ -601,12 +496,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : OTG_FS_PowerSwitchOn_Pin BTN_DOWN_Pin */
-  GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin|BTN_DOWN_Pin;
+  /*Configure GPIO pin : OTG_FS_PowerSwitchOn_Pin */
+  GPIO_InitStruct.Pin = OTG_FS_PowerSwitchOn_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+  HAL_GPIO_Init(OTG_FS_PowerSwitchOn_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PDM_OUT_Pin */
   GPIO_InitStruct.Pin = PDM_OUT_Pin;
@@ -653,8 +548,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : BTN_UP_Pin BTN_LEFT_Pin BTN_RIGHT_Pin */
-  GPIO_InitStruct.Pin = BTN_UP_Pin|BTN_LEFT_Pin|BTN_RIGHT_Pin;
+  /*Configure GPIO pins : BTN_UP_Pin BTN_DOWN_Pin BTN_LEFT_Pin BTN_RIGHT_Pin */
+  GPIO_InitStruct.Pin = BTN_UP_Pin|BTN_DOWN_Pin|BTN_LEFT_Pin|BTN_RIGHT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
