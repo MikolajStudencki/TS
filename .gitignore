@@ -1,0 +1,5 @@
+# Ignore STM32 settings files
+.settings/
+
+# Ignore STM32 debug files
+Debug/
