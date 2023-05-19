@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "lcd.h"
+#include "buttons.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -240,6 +241,7 @@ void displayAlarmTemperature()
 
 	Lcd_string(&lcd, "\x01");
 	Lcd_string(&lcd, "!");
+
 }
 
 /* USER CODE END 0 */
@@ -279,6 +281,7 @@ int main(void)
 	MX_USB_HOST_Init();
 	MX_TIM11_Init();
 	/* USER CODE BEGIN 2 */
+	int start_time = HAL_GetTick();
 	lcd = Lcd_create(
 			ports,
 			pins,
@@ -295,14 +298,24 @@ int main(void)
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while(1) {
+		int end_time = HAL_GetTick();
 		getTemperatureSensorVoltage();
 		displayCurrentTemperature();
-		displayAlarmTemperature();
 
-		calcDateTime();
+		if(end_time-start_time>=1000){
+			displayAlarmTemperature();
+			calcDateTime();
+			start_time = end_time;
+		}
 		displayTimeLcd();
+		button_pressed(lcd);
+//		if(HAL_GPIO_ReadPin(BTN_LEFT_GPIO_Port, BTN_LEFT_Pin)==GPIO_PIN_RESET){  //Check if button pressed
+//			HAL_GPIO_WritePin(LD3_GPIO_Port,  LD3_Pin,GPIO_PIN_SET);
+//		}else{
+//			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin,GPIO_PIN_RESET);	      //Else Led Switch Off
+//		}
 
-		HAL_Delay(1000);
+//		HAL_Delay(1000);
 	}
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();
