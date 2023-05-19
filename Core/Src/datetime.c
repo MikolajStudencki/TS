@@ -1,8 +1,12 @@
-/**
- *  @file datetime.c
+/*!
+ *	\file datetime.c
+ * 	\brief This file contains private and public variables, prototypes, functions for date-time
  *
- *  Created on: 19/05/2023
- *  @author: Mikołaj Haglauer
+ *	This file contains public functions for getting, setting and displaying date and time
+ *	on LCD display. It also contains structure type for date-time variables.
+ *
+ *  \created 19/05/2023
+ *  \author Mikołaj Haglauer
  */
 
 #include "datetime.h"
