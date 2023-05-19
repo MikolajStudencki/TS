@@ -9,4 +9,16 @@
 #include "main.h"
 #include "lcd.h"
 
-void button_pressed(Lcd_HandleTypeDef lcd);
+typedef struct
+{
+	char *key;
+	GPIO_PinState pinState;
+	GPIO_TypeDef* GPIOx;
+	uint16_t GPIO_Pin;
+	char *value;
+} button;
+
+void readAllButtonStatuses();
+void readButtonStatus(button *g_button);
+void displayButtonValue(Lcd_HandleTypeDef *lcd);
+GPIO_PinState getPinStateByKey(char *key);
