@@ -81,9 +81,12 @@ uint8_t celsiusChar[] = {
 
 Lcd_HandleTypeDef lcd;
 
-uint32_t value;
-int temperature;
-int alarmTemperature = 36;
+static const uint16_t adc_range = 4095;
+static const float adc_v_ref = 3.3;
+static float adc_value;
+static float adc_voltage;
+static uint8_t temperature;
+static uint8_t alarmTemperature = 36;
 
 char degreeCharacter = 223;
 /* USER CODE END PV */
@@ -112,9 +115,9 @@ void getTemperatureSensorVoltage()
 {
 	HAL_ADC_Start(&hadc1);
 	HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
-
-	value = HAL_ADC_GetValue(&hadc1);
-	temperature = 100.0 - ((value / 1024.0) * 49.0);
+	adc_value = HAL_ADC_GetValue(&hadc1);
+	adc_voltage = adc_value * (adc_v_ref / adc_range);
+	temperature = 100 - (50 * adc_voltage);
 }
 
 void displayCurrentTemperature()
@@ -194,6 +197,8 @@ int main(void)
 
 	displayAlarmTemperature();
 
+	static uint32_t end_time;
+	static uint32_t start_time;
 	dateTimeInit();
   /* USER CODE END 2 */
 
@@ -203,8 +208,14 @@ int main(void)
 	{
 		cycleThroughSecond();
 
-		getTemperatureSensorVoltage();
-		displayCurrentTemperature();
+		end_time = HAL_GetTick();
+
+		if(end_time - start_time >= 1000)
+		{
+			getTemperatureSensorVoltage();
+			displayCurrentTemperature();
+			start_time = end_time;
+		}
 
 		Lcd_cursor(&lcd, 0, 6);
 		displayDateLcd(&lcd);
