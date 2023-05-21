@@ -1,33 +1,12 @@
 /*!
  *	\file datetime.c
- * 	\brief This file contains private and public variables, prototypes, functions for date-time
+ * 	\brief This file contains private and public variables, prototypes, functions for date-time operations.
  *
  *	This file contains private set of prototypes, variables and functions and public implementation
  *	of prototypes from file 'datatime.h'.
  *
  *  Created 19/05/2023
  *  \author Mikołaj Haglauer
- */
-
-/*!
- *	\fn static void displayDateTimePart(Lcd_HandleTypeDef *lcd, dateTime *dt_var)
- *	\brief Function used to display parts of the date.
- *	\param lcd Pointer to LCD display.
- *	\param dt_var Pointer to displayed dateTime variable.
- */
-
-/*!
- *	\fn static void checkDateTime(dateTime *dt_var, dateTime *i_dt_var)
- *  \brief Function used to check and increment parts of the dateTime.
- *	\param dt_var Pointer to checked value.
- *	\param i_dt_var Pointer to next in size dateTime variable incremented value.
- */
-
-/*!
- *	\fn static void iterateDateTime(void)
- *	\brief Function used to iterate through dateTime variables to correctly estimate and set date and time.
- *
- *	Needs cycleThroughSecond function to cycle through this method every time a second passes.
  */
 
 /*!
@@ -76,6 +55,28 @@
  *	\var static uint32_t start_time
  * 	\brief Value of started time of measure in cycleThroughSecond function.
  */
+
+/*!
+ *	\fn static void displayDateTimePart(Lcd_HandleTypeDef *lcd, dateTime *dt_var)
+ *	\brief Function used to display parts of the date.
+ *	\param lcd Pointer to LCD display.
+ *	\param dt_var Pointer to displayed dateTime variable.
+ */
+
+/*!
+ *	\fn static void checkDateTime(dateTime *dt_var, dateTime *i_dt_var)
+ *  \brief Function used to check and increment parts of the dateTime.
+ *	\param dt_var Pointer to checked value.
+ *	\param i_dt_var Pointer to next in size dateTime variable incremented value.
+ */
+
+/*!
+ *	\fn static void iterateDateTime(void)
+ *	\brief Function used to iterate through dateTime variables to correctly estimate and set date and time.
+ *
+ *	Needs cycleThroughSecond function to cycle through this method every time a second passes.
+ */
+
 #include "datetime.h"
 
 /************************************** Private function prototypes **************************************/
@@ -107,7 +108,7 @@ static dateTime dateTimeMap[6] =
 				.minValue = 1
 		},
 		{
-				.currentValue = 5,
+				.currentValue = May,
 				.maxValue = 12,
 				.minValue = 1
 		},
@@ -183,7 +184,7 @@ void setDate(uint16_t year_var, uint8_t month_var, uint8_t day_var)
 	year->currentValue = year_var;
 	month->currentValue = month_var;
 	day->currentValue = day_var;
-	day->maxValue = getMaxDaysByMonth(month);
+	day->maxValue = getMaxDaysByMonth(month->currentValue);
 }
 
 void setTime(uint8_t hour_var, uint8_t minute_var, uint8_t second_var)
@@ -193,9 +194,9 @@ void setTime(uint8_t hour_var, uint8_t minute_var, uint8_t second_var)
 	second->currentValue = second_var;
 }
 
-uint8_t getMaxDaysByMonth(dateTime *month_var)
+uint8_t getMaxDaysByMonth(monthsKey month_key)
 {
-	switch ()
+	switch (month_key)
 	{
 		case 2:
 			if (((year->currentValue % 4 == 0) && (year->currentValue % 100 != 0)) ||
@@ -232,7 +233,7 @@ static void iterateDateTime()
 
 	if (day->currentValue == 1)
 	{
-		day->maxValue = getMaxDaysByMonth(month);
+		day->maxValue = getMaxDaysByMonth(month->currentValue);
 	}
 }
 
