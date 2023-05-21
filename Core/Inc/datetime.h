@@ -85,12 +85,12 @@
 
 /************************************** Public structures **************************************/
 typedef enum {
-	Second, //!< Enum representation of [0] index in dateTimeMap.
-	Minute, //!< Enum representation of [1] index in dateTimeMap.
-	Hour, //!< Enum representation of [2] index in dateTimeMap.
-	Month, //!< Enum representation of [3] index in dateTimeMap.
-	Day, //!< Enum representation of [4] index in dateTimeMap.
-	Year //!< Enum representation of [5] index in dateTimeMap.
+	Second, //!< Representation of [0] index in dateTimeMap.
+	Minute, //!< Representation of [1] index in dateTimeMap.
+	Hour, //!< Representation of [2] index in dateTimeMap.
+	Month, //!< Representation of [3] index in dateTimeMap.
+	Day, //!< Representation of [4] index in dateTimeMap.
+	Year //!< Representation of [5] index in dateTimeMap.
 } dateTimeKey;
 
 typedef struct
