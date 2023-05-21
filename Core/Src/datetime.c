@@ -172,7 +172,7 @@ void cycleThroughSecond()
 {
 	end_time = HAL_GetTick();
 
-	if(end_time - start_time >= 1000)
+	if (end_time - start_time >= 1000)
 	{
 		iterateDateTime();
 		start_time = end_time;
