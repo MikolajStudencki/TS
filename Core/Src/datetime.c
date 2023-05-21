@@ -2,106 +2,142 @@
  *	\file datetime.c
  * 	\brief This file contains private and public variables, prototypes, functions for date-time
  *
- *	This file contains public functions for getting, setting and displaying date and time
- *	on LCD display. It also contains structure type for date-time variables.
+ *	This file contains private set of prototypes, variables and functions and public implementation
+ *	of prototypes from file 'datatime.h'.
  *
- *  \created 19/05/2023
+ *  Created 19/05/2023
  *  \author Mikołaj Haglauer
  */
 
+/*!
+ *	\fn static void displayDateTimePart(Lcd_HandleTypeDef *lcd, dateTime *dt_var)
+ *	\brief Function used to display parts of the date.
+ *	\param lcd Pointer to LCD display.
+ *	\param dt_var Pointer to displayed dateTime variable.
+ */
+
+/*!
+ *	\fn static void checkDateTime(dateTime *dt_var, dateTime *i_dt_var)
+ *  \brief Function used to check and increment parts of the dateTime.
+ *	\param dt_var Pointer to checked value.
+ *	\param i_dt_var Pointer to next in size dateTime variable incremented value.
+ */
+
+/*!
+ *	\fn static void iterateDateTime(void)
+ *	\brief Function used to iterate through dateTime variables to correctly estimate and set date and time.
+ *
+ *	Needs cycleThroughSecond function to cycle through this method every time a second passes.
+ */
+
+/*!
+ *	\var static dateTime dateTimeMap[6]
+ * 	\brief Array of dateTime variables.
+ *
+ * 	Map indexes: [0] second, [1] minute, [2] hour, [3] day, [4] month, [5] year.
+ */
+
+/*!
+ *	\var static dateTime *second
+ * 	\brief Pointer to a "second" dateTime variable in dateTimeMap.
+ */
+
+/*!
+ *	\var static dateTime *minute
+ * 	\brief Pointer to a "minute" dateTime variable in dateTimeMap.
+ */
+
+/*!
+ *	\var static dateTime *hour
+ * 	\brief Pointer to a "hour" dateTime variable in dateTimeMap.
+ */
+
+/*!
+ *	\var static dateTime *day
+ * 	\brief Pointer to a "day" dateTime variable in dateTimeMap.
+ */
+
+/*!
+ *	\var static dateTime *month
+ * 	\brief Pointer to a "month" dateTime variable in dateTimeMap.
+ */
+
+/*!
+ *	\var static dateTime *year
+ * 	\brief Pointer to a "year" dateTime variable in dateTimeMap.
+ */
+
+/*!
+ *	\var static uint32_t end_time
+ * 	\brief Value of end time of measure in cycleThroughSecond function.
+ */
+
+/*!
+ *	\var static uint32_t start_time
+ * 	\brief Value of started time of measure in cycleThroughSecond function.
+ */
 #include "datetime.h"
 
 /************************************** Private function prototypes **************************************/
-static void displayDateTimePart(Lcd_HandleTypeDef *lcd, dateTime *dt_Var);
-static void checkDateTime(dateTime *dt_Var, dateTime *i_dt_Var);
-static uint8_t returnDaysByMonth(dateTime *g_month);
-/*!
- *	iterateDateTime function
- *	This function is used to iterate through dateTime variables to correctly
- *	estimate and set date and time.
- *	Needs external loop to cycle through this method every time a second passes.
- */
+static void displayDateTimePart(Lcd_HandleTypeDef *lcd, dateTime *dt_var);
+static void checkDateTime(dateTime *dt_var, dateTime *i_dt_var);
 static void iterateDateTime(void);
 
 /************************************** Private variables **************************************/
-static dt_Map dateTimeMap[6] =
+static dateTime dateTimeMap[6] =
 {
 		{
-				.key = "second",
-				.dt_Var =
-				{
-						.currentValue = 30,
-						.maxValue = 59,
-						.minValue = 0
-				}
+				.currentValue = 30,
+				.maxValue = 59,
+				.minValue = 0
 		},
 		{
-				.key = "minute",
-				.dt_Var =
-				{
-						.currentValue = 59,
-						.maxValue = 59,
-						.minValue = 0
-				}
+				.currentValue = 59,
+				.maxValue = 59,
+				.minValue = 0
 		},
 		{
-				.key = "hour",
-				.dt_Var =
-				{
-						.currentValue = 23,
-						.maxValue = 23,
-						.minValue = 0
-				}
+				.currentValue = 23,
+				.maxValue = 23,
+				.minValue = 0
 		},
 		{
-				.key = "day",
-				.dt_Var =
-				{
-						.currentValue = 19,
-						.maxValue = 31,
-						.minValue = 1
-				}
+				.currentValue = 19,
+				.maxValue = 31,
+				.minValue = 1
 		},
 		{
-				.key = "month",
-				.dt_Var =
-				{
-						.currentValue = 5,
-						.maxValue = 12,
-						.minValue = 1
-				}
+				.currentValue = 5,
+				.maxValue = 12,
+				.minValue = 1
 		},
 		{
-				.key = "year",
-				.dt_Var =
-				{
-						.currentValue = 2023,
-						.maxValue = 9999,
-						.minValue = 0
-				}
+				.currentValue = 2023,
+				.maxValue = 9999,
+				.minValue = 0
 		}
+
 };
 
-static dateTime *year = NULL;
-static dateTime *month = NULL;
-static dateTime *day = NULL;
-static dateTime *hour = NULL;
-static dateTime *minute = NULL;
 static dateTime *second = NULL;
+static dateTime *minute = NULL;
+static dateTime *hour = NULL;
+static dateTime *day = NULL;
+static dateTime *month = NULL;
+static dateTime *year = NULL;
 
 static uint32_t end_time;
 static uint32_t start_time;
+
 /************************************** Public functions **************************************/
 void dateTimeInit()
 {
-	year = getDateTimeByKey("year");
-	month = getDateTimeByKey("month");
-	day = getDateTimeByKey("day");
-	hour = getDateTimeByKey("hour");
-	minute = getDateTimeByKey("minute");
-	second = getDateTimeByKey("second");
-
-	start_time = HAL_GetTick();
+	second = getDateTimeByKey(Second);
+	minute = getDateTimeByKey(Minute);
+	hour = getDateTimeByKey(Hour);
+	day = getDateTimeByKey(Day);
+	month = getDateTimeByKey(Month);
+	year = getDateTimeByKey(Year);
 }
 
 void displayTimeLcd(Lcd_HandleTypeDef *lcd)
@@ -126,31 +162,9 @@ void displayDateLcd(Lcd_HandleTypeDef *lcd)
 	displayDateTimePart(lcd, day);
 }
 
-dateTime *getDateTimeByKey(char *key)
+dateTime *getDateTimeByKey(dateTimeKey key)
 {
-	for (int i = 0; i < 6; i++)
-	{
-		if (dateTimeMap[i].key == key)
-		{
-			return &dateTimeMap[i].dt_Var;
-		}
-	}
-	return &dateTimeMap[0].dt_Var;
-}
-
-void setTime(uint8_t s_hour, uint8_t s_minute, uint8_t s_second)
-{
-	hour->currentValue = s_hour;
-	minute->currentValue = s_minute;
-	second->currentValue = s_second;
-}
-
-void setDate(uint16_t s_year, uint8_t s_month, uint8_t s_day)
-{
-	year->currentValue = s_year;
-	month->currentValue = s_month;
-	day->currentValue = s_day;
-	day->maxValue = returnDaysByMonth(month);
+	return &dateTimeMap[key];
 }
 
 void cycleThroughSecond()
@@ -164,56 +178,78 @@ void cycleThroughSecond()
 	}
 }
 
+void setDate(uint16_t year_var, uint8_t month_var, uint8_t day_var)
+{
+	year->currentValue = year_var;
+	month->currentValue = month_var;
+	day->currentValue = day_var;
+	day->maxValue = getMaxDaysByMonth(month);
+}
+
+void setTime(uint8_t hour_var, uint8_t minute_var, uint8_t second_var)
+{
+	hour->currentValue = hour_var;
+	minute->currentValue = minute_var;
+	second->currentValue = second_var;
+}
+
+uint8_t getMaxDaysByMonth(dateTime *month_var)
+{
+	switch ()
+	{
+		case 2:
+			if (((year->currentValue % 4 == 0) && (year->currentValue % 100 != 0)) ||
+				(year->currentValue % 400 == 0))
+			{
+				return 29;
+			}
+			return 28;
+		case 4:
+		case 6:
+		case 8:
+		case 10:
+		case 12:
+			return 30;
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+		case 9:
+		case 11:
+		default:
+			return 31;
+	}
+}
+
 /************************************** Private functions **************************************/
 static void iterateDateTime()
 {
 	++second->currentValue;
 	for (int i = 0; i < 5; i++)
 	{
-		checkDateTime(&dateTimeMap[i].dt_Var, &dateTimeMap[i + 1].dt_Var);
+		checkDateTime(&dateTimeMap[i], &dateTimeMap[i + 1]);
 	}
 
 	if (day->currentValue == 1)
 	{
-		day->maxValue = returnDaysByMonth(month);
+		day->maxValue = getMaxDaysByMonth(month);
 	}
 }
 
-static void checkDateTime(dateTime *dt_Var, dateTime *i_dt_Var)
+static void checkDateTime(dateTime *dt_var, dateTime *i_dt_var)
 {
-	if (dt_Var->currentValue > dt_Var->maxValue)
+	if (dt_var->currentValue > dt_var->maxValue)
 	{
-		dt_Var->currentValue = dt_Var->minValue;
-		++i_dt_Var->currentValue;
+		dt_var->currentValue = dt_var->minValue;
+		++i_dt_var->currentValue;
 	}
 }
 
-static void displayDateTimePart(Lcd_HandleTypeDef *lcd, dateTime *dt_Var)
+static void displayDateTimePart(Lcd_HandleTypeDef *lcd, dateTime *dt_var)
 {
-	if (dt_Var->currentValue < 10)
+	if (dt_var->currentValue < 10)
 	{
 		Lcd_int(lcd, 0);
 	}
-	Lcd_int(lcd, dt_Var->currentValue);
-}
-
-static uint8_t returnDaysByMonth(dateTime *g_month)
-{
-	if (g_month->currentValue == 2) /// If February
-	{
-		uint16_t yearCV = year->currentValue;
-		if (((yearCV % 4 == 0) && (yearCV % 100 != 0)) ||
-			(yearCV % 400 == 0)) { /// If leap year return 29 days
-			return 29;
-		}
-		return 28;
-	}
-	else if ((g_month->currentValue % 2) != 0) /// If odd month return 31 days
-	{
-		return 31;
-	}
-	else /// If even month return 30 days
-	{
-		return 30;
-	}
+	Lcd_int(lcd, dt_var->currentValue);
 }
