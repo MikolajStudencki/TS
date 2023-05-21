@@ -12,20 +12,14 @@
  */
 
 /*!
- *	\fn void readAllButtonStates()
- *	\brief Function used to read states of all button pins.
- */
-
-/*!
  * 	\typedef typedef struct button
  * 	\brief Type definition for a structure used for storing data about used buttons.
  */
 
 /*!
- *	\fn GPIO_PinState getButtonStateByKey(buttonsKey key)
- *	\brief Function used to get state of checked button.
- *	\param key Int value of button.
- *	\return GPIO_PinState State of button pin.
+ *	\fn buttonsKey getPushedButton(void)
+ *	\brief Function used to get currently pushed button.
+ *	\return buttonsKey Currently pushed button.
  */
 
 #include "stm32f4xx_hal.h"
@@ -34,11 +28,12 @@
 /************************************** Public enums **************************************/
 typedef enum
 {
-	BTN_UP,
-	BTN_DOWN,
-	BTN_LEFT,
-	BTN_MID,
-	BTN_RIGHT
+	BTN_UP, //!< Representation of [0] index in buttons.
+	BTN_DOWN, //!< Representation of [1] index in buttons.
+	BTN_LEFT, //!< Representation of [2] index in buttons.
+	BTN_MID, //!< Representation of [3] index in buttons.
+	BTN_RIGHT, //!< Representation of [4] index in buttons.
+	NO_BTN_PUSHED //!< Representation of not pushed buttons.
 } buttonsKey;
 
 /************************************** Public structures **************************************/
@@ -50,5 +45,4 @@ typedef struct
 } button;
 
 /************************************** Public function prototypes **************************************/
-void readAllButtonStates();
-GPIO_PinState getButtonStateByKey(buttonsKey key);
+buttonsKey getPushedButton(void);
