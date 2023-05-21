@@ -56,6 +56,36 @@ buttonsKey getPushedButton(void)
 	return 5;
 }
 
+void callFunctionByButtonPushed(
+		void (*btn_up_fun_var)(),
+		void (*btn_down_fun_var)(),
+		void (*btn_left_fun_var)(),
+		void (*btn_mid_fun_var)(),
+		void (*btn_right_fun_var)()
+)
+{
+	switch (getPushedButton())
+	{
+		case BTN_UP:
+			btn_up_fun_var();
+			break;
+		case BTN_DOWN:
+			btn_down_fun_var();
+			break;
+		case BTN_LEFT:
+			btn_left_fun_var();
+			break;
+		case BTN_MID:
+			btn_mid_fun_var();
+			break;
+		case BTN_RIGHT:
+			btn_right_fun_var();
+			break;
+		default:
+			break;
+	}
+}
+
 /************************************** Private functions **************************************/
 static GPIO_PinState getButtonState(button button_var)
 {

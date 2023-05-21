@@ -22,6 +22,16 @@
  *	\return buttonsKey Currently pushed button.
  */
 
+/*!
+ *	\fnvoid callFunctionByButtonPushed(void (*btn_up_fun_var)(), void (*btn_down_fun_var)(), void (*btn_left_fun_var)(), void (*btn_mid_fun_var)(), void (*btn_right_fun_var)())
+ *	\brief Function used to call method depending on button pushed.
+ *	\param btn_up_fun_var Pointer to function called if BTN_UP pushed.
+ *	\param btn_down_fun_var Pointer to function called if BTN_DOWN pushed.
+ *	\param btn_left_fun_var Pointer to function called if BTN_LEFT pushed.
+ *	\param btn_mid_fun_var Pointer to function called if BTN_MID pushed.
+ *	\param btn_right_fun_var Pointer to function called if BTN_RIGHT pushed.
+ */
+
 #include "stm32f4xx_hal.h"
 #include "main.h"
 
@@ -46,3 +56,10 @@ typedef struct
 
 /************************************** Public function prototypes **************************************/
 buttonsKey getPushedButton(void);
+void callFunctionByButtonPushed(
+		void (*btn_up_fun_var)(),
+		void (*btn_down_fun_var)(),
+		void (*btn_left_fun_var)(),
+		void (*btn_mid_fun_var)(),
+		void (*btn_right_fun_var)()
+);
