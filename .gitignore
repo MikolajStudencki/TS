@@ -1,5 +1,14 @@
-# Ignore STM32 settings files
+# Ignore STM32 directories
 .settings/
-
-# Ignore STM32 debug files
 Debug/
+Drivers/
+Middlewares/
+USB_HOST/
+
+# Ignore STM32 files
+.cproject
+.mxproject
+.projectS
+STM32F407VGTX_FLASH.Id
+STM32F407VGTX_RAM.Id
+TEMP_SENS Debug.launch
