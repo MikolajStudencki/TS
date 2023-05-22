@@ -9,7 +9,7 @@ Core/Startup/
 # Ignore STM32 files
 .cproject
 .mxproject
-.projectS
+.project
 STM32F407VGTX_FLASH.ld
 STM32F407VGTX_RAM.ld
 TEMP_SENS Debug.launch
