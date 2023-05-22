@@ -4,11 +4,12 @@ Debug/
 Drivers/
 Middlewares/
 USB_HOST/
+Core/Startup/
 
 # Ignore STM32 files
 .cproject
 .mxproject
 .projectS
-STM32F407VGTX_FLASH.Id
-STM32F407VGTX_RAM.Id
+STM32F407VGTX_FLASH.ld
+STM32F407VGTX_RAM.ld
 TEMP_SENS Debug.launch

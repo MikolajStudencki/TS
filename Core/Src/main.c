@@ -102,7 +102,6 @@ static void MX_TIM11_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
-
 void displayCurrentTemperature(void);
 void getTemperatureSensorVoltage(void);
 void displayAlarmTemperature(void);
@@ -146,6 +145,33 @@ void displayAlarmTemperature()
 
 }
 
+void displayU()
+{
+	Lcd_string(&lcd, "U");
+}
+
+void displayD()
+{
+	Lcd_string(&lcd, "D");
+}
+
+void displayL()
+{
+	Lcd_string(&lcd, "L");
+}
+
+void displayM()
+{
+	Lcd_string(&lcd, "M");
+}
+
+void displayR()
+{
+	Lcd_string(&lcd, "R");
+}
+
+static uint32_t end_time;
+static uint32_t start_time;
 /* USER CODE END 0 */
 
 /**
@@ -196,9 +222,6 @@ int main(void)
 	Lcd_define_char(&lcd, 1, celsiusChar);
 
 	displayAlarmTemperature();
-
-	static uint32_t end_time;
-	static uint32_t start_time;
 	dateTimeInit();
   /* USER CODE END 2 */
 
@@ -212,6 +235,7 @@ int main(void)
 
 		if(end_time - start_time >= 1000)
 		{
+
 			getTemperatureSensorVoltage();
 			displayCurrentTemperature();
 			start_time = end_time;
@@ -223,8 +247,14 @@ int main(void)
 		Lcd_cursor(&lcd, 1, 8);
 		displayTimeLcd(&lcd);
 
-		readAllButtonStatuses();
-		displayButtonValue(&lcd);
+		Lcd_cursor(&lcd, 1, 5);
+		callFunctionByButtonPushed(
+				&displayU,
+				&displayD,
+				&displayL,
+				&displayM,
+				&displayR
+		);
 	}
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();
