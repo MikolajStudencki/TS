@@ -80,7 +80,7 @@
 #include "datetime.h"
 
 /************************************** Private function prototypes **************************************/
-static void displayDateTimePart(Lcd_HandleTypeDef *lcd, dateTime *dt_var);
+static void displayDateTimePart(Lcd_HandleTypeDef *lcd, uint16_t dt_var);
 static void checkDateTime(dateTime *dt_var, dateTime *i_dt_var);
 static void iterateDateTime(void);
 
@@ -120,52 +120,42 @@ static dateTime dateTimeMap[6] =
 
 };
 
-static dateTime *second = NULL;
-static dateTime *minute = NULL;
-static dateTime *hour = NULL;
-static dateTime *day = NULL;
-static dateTime *month = NULL;
-static dateTime *year = NULL;
+static dateTime *second = &dateTimeMap[Second];
+static dateTime *minute = &dateTimeMap[Minute];
+static dateTime *hour = &dateTimeMap[Hour];
+static dateTime *day = &dateTimeMap[Day];
+static dateTime *month = &dateTimeMap[Month];
+static dateTime *year = &dateTimeMap[Year];
 
 static uint32_t end_time;
 static uint32_t start_time;
 
 /************************************** Public functions **************************************/
-void dateTimeInit()
+void Lcd_displayTime(Lcd_HandleTypeDef *lcd, uint8_t hour_var, uint8_t minute_var, uint8_t second_var)
 {
-	second = getDateTimeByKey(Second);
-	minute = getDateTimeByKey(Minute);
-	hour = getDateTimeByKey(Hour);
-	day = getDateTimeByKey(Day);
-	month = getDateTimeByKey(Month);
-	year = getDateTimeByKey(Year);
+	displayDateTimePart(lcd, hour_var);
+	Lcd_string(lcd, "-");
+
+	displayDateTimePart(lcd, minute_var);
+	Lcd_string(lcd, "-");
+
+	displayDateTimePart(lcd, second_var);
 }
 
-void displayTimeLcd(Lcd_HandleTypeDef *lcd)
+void Lcd_displayDate(Lcd_HandleTypeDef *lcd, uint16_t year_var, uint8_t month_var, uint8_t day_var)
 {
-	displayDateTimePart(lcd, hour);
+	displayDateTimePart(lcd, year_var);
 	Lcd_string(lcd, "-");
 
-	displayDateTimePart(lcd, minute);
+	displayDateTimePart(lcd, month_var);
 	Lcd_string(lcd, "-");
 
-	displayDateTimePart(lcd, second);
+	displayDateTimePart(lcd, day_var);
 }
 
-void displayDateLcd(Lcd_HandleTypeDef *lcd)
+dateTime getDateTimeByKey(dateTimeKey key)
 {
-	displayDateTimePart(lcd, year);
-	Lcd_string(lcd, "-");
-
-	displayDateTimePart(lcd, month);
-	Lcd_string(lcd, "-");
-
-	displayDateTimePart(lcd, day);
-}
-
-dateTime *getDateTimeByKey(dateTimeKey key)
-{
-	return &dateTimeMap[key];
+	return dateTimeMap[key];
 }
 
 void cycleThroughSecond()
@@ -246,11 +236,11 @@ static void checkDateTime(dateTime *dt_var, dateTime *i_dt_var)
 	}
 }
 
-static void displayDateTimePart(Lcd_HandleTypeDef *lcd, dateTime *dt_var)
+static void displayDateTimePart(Lcd_HandleTypeDef *lcd, uint16_t dt_var)
 {
-	if (dt_var->currentValue < 10)
+	if (dt_var < 10)
 	{
 		Lcd_int(lcd, 0);
 	}
-	Lcd_int(lcd, dt_var->currentValue);
+	Lcd_int(lcd, dt_var);
 }

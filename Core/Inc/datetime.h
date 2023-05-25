@@ -124,11 +124,10 @@ typedef struct
 } dateTime;
 
 /************************************** Public function prototypes **************************************/
-void dateTimeInit(void);
-void displayTimeLcd(Lcd_HandleTypeDef *lcd);
-void displayDateLcd(Lcd_HandleTypeDef *lcd);
+void Lcd_displayTime(Lcd_HandleTypeDef *lcd, uint8_t hour_var, uint8_t minute_var, uint8_t second_var);
+void Lcd_displayDate(Lcd_HandleTypeDef *lcd, uint16_t year_var, uint8_t month_var, uint8_t day_var);
 void cycleThroughSecond();
 void setDate(uint16_t year_var, uint8_t month_var, uint8_t day_var);
 void setTime(uint8_t hour_var, uint8_t minute_var, uint8_t second_var);
-dateTime *getDateTimeByKey(dateTimeKey key);
+dateTime getDateTimeByKey(dateTimeKey key);
 uint8_t getMaxDaysByMonth(monthsKey month_key);

@@ -43,6 +43,11 @@ static button buttons[5] =
 		}
 };
 
+static void (*btn_up_fun)();
+static void (*btn_down_fun)();
+static void (*btn_left_fun)();
+static void (*btn_mid_fun)();
+static void (*btn_right_fun)();
 /************************************** Public functions **************************************/
 buttonsKey getPushedButton(void)
 {
@@ -56,34 +61,51 @@ buttonsKey getPushedButton(void)
 	return 5;
 }
 
-void callFunctionByButtonPushed(
-		void (*btn_up_fun_var)(),
-		void (*btn_down_fun_var)(),
-		void (*btn_left_fun_var)(),
-		void (*btn_mid_fun_var)(),
-		void (*btn_right_fun_var)()
-)
+void callFunctionByButtonPushed()
 {
 	switch (getPushedButton())
 	{
 		case BTN_UP:
-			btn_up_fun_var();
+			btn_up_fun();
 			break;
 		case BTN_DOWN:
-			btn_down_fun_var();
+			btn_down_fun();
 			break;
 		case BTN_LEFT:
-			btn_left_fun_var();
+			btn_left_fun();
 			break;
 		case BTN_MID:
-			btn_mid_fun_var();
+			btn_mid_fun();
 			break;
 		case BTN_RIGHT:
-			btn_right_fun_var();
-			break;
-		default:
+			btn_right_fun();
 			break;
 	}
+}
+
+void set_btn_up_fun(void (*btn_up_fun_var)())
+{
+	btn_up_fun = btn_up_fun_var;
+}
+
+void set_btn_down_fun(void (*btn_down_fun_var)())
+{
+	btn_down_fun = btn_down_fun_var;
+}
+
+void set_btn_left_fun(void (*btn_left_fun_var)())
+{
+	btn_left_fun = btn_left_fun_var;
+}
+
+void set_btn_mid_fun(void (*btn_mid_fun_var)())
+{
+	btn_mid_fun = btn_mid_fun_var;
+}
+
+void set_btn_right_fun(void (*btn_right_fun_var)())
+{
+	btn_right_fun = btn_right_fun_var;
 }
 
 /************************************** Private functions **************************************/
