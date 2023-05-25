@@ -42,8 +42,7 @@ typedef enum
 	BTN_DOWN, //!< Representation of [1] index in buttons.
 	BTN_LEFT, //!< Representation of [2] index in buttons.
 	BTN_MID, //!< Representation of [3] index in buttons.
-	BTN_RIGHT, //!< Representation of [4] index in buttons.
-	NO_BTN_PUSHED //!< Representation of not pushed buttons.
+	BTN_RIGHT //!< Representation of [4] index in buttons.
 } buttonsKey;
 
 /************************************** Public structures **************************************/
@@ -56,10 +55,12 @@ typedef struct
 
 /************************************** Public function prototypes **************************************/
 buttonsKey getPushedButton(void);
-void callFunctionByButtonPushed(
-		void (*btn_up_fun_var)(),
-		void (*btn_down_fun_var)(),
-		void (*btn_left_fun_var)(),
-		void (*btn_mid_fun_var)(),
-		void (*btn_right_fun_var)()
-);
+void callFunctionByButtonPushed(void);
+void set_btn_up_fun(void (*btn_up_fun_var)());
+void set_btn_down_fun(void (*btn_down_fun_var)());
+void set_btn_left_fun(void (*btn_left_fun_var)());
+void set_btn_mid_fun(void (*btn_mid_fun_var)());
+void set_btn_right_fun(void (*btn_right_fun_var)());
+
+
+

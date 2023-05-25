@@ -25,6 +25,7 @@
 #include "lcd.h"
 #include "buttons.h"
 #include "datetime.h"
+#include "lcd_characters.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -54,41 +55,23 @@ SPI_HandleTypeDef hspi1;
 TIM_HandleTypeDef htim11;
 
 /* USER CODE BEGIN PV */
-Lcd_PortType ports[] = {
+static Lcd_PortType ports[] = {
 		LCD_DB4_GPIO_Port,
 		LCD_DB5_GPIO_Port,
 		LCD_DB6_GPIO_Port,
 		LCD_DB7_GPIO_Port
 };
 
-Lcd_PinType pins[] = {
+static Lcd_PinType pins[] = {
 		LCD_DB4_Pin,
 		LCD_DB5_Pin,
 		LCD_DB6_Pin,
 		LCD_DB7_Pin
 };
 
-uint8_t celsiusChar[] = {
-		0b01000,
-		0b10100,
-		0b01000,
-		0b00111,
-		0b01000,
-		0b01000,
-		0b01000,
-		0b00111
-};
-
 Lcd_HandleTypeDef lcd;
 
-static const uint16_t adc_range = 4095;
-static const float adc_v_ref = 3.3;
-static float adc_value;
-static float adc_voltage;
-static uint8_t temperature;
-static uint8_t alarmTemperature = 36;
-
-char degreeCharacter = 223;
+static uint8_t screen_index = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -102,76 +85,41 @@ static void MX_TIM11_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
-void displayCurrentTemperature(void);
-void getTemperatureSensorVoltage(void);
-void displayAlarmTemperature(void);
+static void incrementDisplayIndex(void);
+static void decrementDisplayIndex(void);
+static void doNothing(void);
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void getTemperatureSensorVoltage()
+static void incrementDisplayIndex()
 {
-	HAL_ADC_Start(&hadc1);
-	HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
-	adc_value = HAL_ADC_GetValue(&hadc1);
-	adc_voltage = adc_value * (adc_v_ref / adc_range);
-	temperature = 100 - (50 * adc_voltage);
-}
-
-void displayCurrentTemperature()
-{
-	Lcd_cursor(&lcd, 0, 0);
-	if (temperature < 10)
+	Lcd_clear(&lcd);
+	if (screen_index == 1)
 	{
-		Lcd_int(&lcd, 0);
+		screen_index = 0;
 	}
-	Lcd_int(&lcd, (temperature % 100));
-
-	Lcd_string(&lcd, "\x01");
-}
-
-void displayAlarmTemperature()
-{
-	Lcd_cursor(&lcd, 1, 0);
-	if (alarmTemperature < 10)
+	else
 	{
-		Lcd_int(&lcd, 0);
+		++screen_index;
 	}
-	Lcd_int(&lcd, (alarmTemperature % 100));
-
-	Lcd_string(&lcd, "\x01");
-	Lcd_string(&lcd, "!");
-
 }
 
-void displayU()
+static void decrementDisplayIndex()
 {
-	Lcd_string(&lcd, "U");
+	Lcd_clear(&lcd);
+	if (screen_index == 0)
+	{
+		screen_index = 1;
+	}
+	else
+	{
+		--screen_index;
+	}
 }
 
-void displayD()
-{
-	Lcd_string(&lcd, "D");
-}
-
-void displayL()
-{
-	Lcd_string(&lcd, "L");
-}
-
-void displayM()
-{
-	Lcd_string(&lcd, "M");
-}
-
-void displayR()
-{
-	Lcd_string(&lcd, "R");
-}
-
-static uint32_t end_time;
-static uint32_t start_time;
+static void doNothing() {}
 /* USER CODE END 0 */
 
 /**
@@ -220,9 +168,9 @@ int main(void)
 	);
 
 	Lcd_define_char(&lcd, 1, celsiusChar);
-
-	displayAlarmTemperature();
-	dateTimeInit();
+	Lcd_define_char(&lcd, 2, alarmCelsiusChar);
+	Lcd_define_char(&lcd, 3, arrowUpChar);
+	Lcd_define_char(&lcd, 4, arrowDownChar);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -230,31 +178,15 @@ int main(void)
 	while(1)
 	{
 		cycleThroughSecond();
-
-		end_time = HAL_GetTick();
-
-		if(end_time - start_time >= 1000)
+		switch (screen_index)
 		{
-
-			getTemperatureSensorVoltage();
-			displayCurrentTemperature();
-			start_time = end_time;
+			case 0:
+				displayMainScreen(&lcd, &hadc1);
+				break;
+			case 1:
+				displayChangeDateTimeScreen(&lcd);
+				break;
 		}
-
-		Lcd_cursor(&lcd, 0, 6);
-		displayDateLcd(&lcd);
-
-		Lcd_cursor(&lcd, 1, 8);
-		displayTimeLcd(&lcd);
-
-		Lcd_cursor(&lcd, 1, 5);
-		callFunctionByButtonPushed(
-				&displayU,
-				&displayD,
-				&displayL,
-				&displayM,
-				&displayR
-		);
 	}
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();
