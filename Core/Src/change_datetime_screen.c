@@ -4,6 +4,10 @@ static void displayDate(Lcd_HandleTypeDef *lcd);
 static void displayTime(Lcd_HandleTypeDef *lcd);
 static void displayArrowUp(Lcd_HandleTypeDef *lcd);
 static void displayArrowDown(Lcd_HandleTypeDef *lcd);
+static void blink(Lcd_HandleTypeDef *lcd, uint8_t col_var, uint8_t row);
+
+static uint32_t end_time;
+static uint32_t start_time;
 
 //static uint8_t selectedIndexX;
 //static uint8_t selectedIndexY;
@@ -11,18 +15,27 @@ static void displayArrowDown(Lcd_HandleTypeDef *lcd);
 
 void displayChangeDateTimeScreen(Lcd_HandleTypeDef *lcd)
 {
-	uint8_t col = 1;
 	displayArrowUp(lcd);
 	displayArrowDown(lcd);
-	for(col;col<10;col++)
-	{
-		Lcd_cursor(lcd, 0, col);
-		Lcd_string(lcd," ");
-	}
-	HAL_Delay(500);
+	blink(lcd, 11, 0);
 	Lcd_cursor(lcd, 0, 0);
 	displayDate(lcd);
 	displayTime(lcd);
+}
+
+static void blink(Lcd_HandleTypeDef *lcd, uint8_t col_var, uint8_t row)
+{
+	end_time = HAL_GetTick();
+
+	if(end_time - start_time >= 100)
+	{
+		for(uint8_t col = 1;col<col_var;col++)
+			{
+				Lcd_cursor(lcd, row, col);
+				Lcd_string(lcd," ");
+			}
+		start_time = end_time;
+	}
 }
 
 static void displayDate(Lcd_HandleTypeDef *lcd)
