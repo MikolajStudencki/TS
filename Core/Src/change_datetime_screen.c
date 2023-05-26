@@ -11,8 +11,16 @@ static void displayArrowDown(Lcd_HandleTypeDef *lcd);
 
 void displayChangeDateTimeScreen(Lcd_HandleTypeDef *lcd)
 {
+	uint8_t col = 1;
 	displayArrowUp(lcd);
 	displayArrowDown(lcd);
+	for(col;col<10;col++)
+	{
+		Lcd_cursor(lcd, 0, col);
+		Lcd_string(lcd," ");
+	}
+	HAL_Delay(500);
+	Lcd_cursor(lcd, 0, 0);
 	displayDate(lcd);
 	displayTime(lcd);
 }

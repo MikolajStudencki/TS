@@ -181,7 +181,8 @@ int main(void)
 		switch (screen_index)
 		{
 			case 0:
-				displayMainScreen(&lcd, &hadc1);
+				displayChangeDateTimeScreen(&lcd);
+//				displayMainScreen(&lcd, &hadc1);
 				break;
 			case 1:
 				displayChangeDateTimeScreen(&lcd);
