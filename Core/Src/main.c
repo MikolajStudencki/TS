@@ -72,6 +72,7 @@ static Lcd_PinType pins[] = {
 Lcd_HandleTypeDef lcd;
 
 static uint8_t screen_index = 0;
+static const uint8_t max_screen_index = 1;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -96,7 +97,7 @@ static void doNothing(void);
 static void incrementDisplayIndex()
 {
 	Lcd_clear(&lcd);
-	if (screen_index == 1)
+	if (screen_index == max_screen_index)
 	{
 		screen_index = 0;
 	}
@@ -111,7 +112,7 @@ static void decrementDisplayIndex()
 	Lcd_clear(&lcd);
 	if (screen_index == 0)
 	{
-		screen_index = 1;
+		screen_index = max_screen_index;
 	}
 	else
 	{
@@ -171,6 +172,12 @@ int main(void)
 	Lcd_define_char(&lcd, 2, alarmCelsiusChar);
 	Lcd_define_char(&lcd, 3, arrowUpChar);
 	Lcd_define_char(&lcd, 4, arrowDownChar);
+
+	set_btn_up_fun(&doNothing);
+	set_btn_down_fun(&doNothing);
+	set_btn_left_fun(&decrementDisplayIndex);
+	set_btn_mid_fun(&doNothing);
+	set_btn_right_fun(&incrementDisplayIndex);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -178,6 +185,7 @@ int main(void)
 	while(1)
 	{
 		cycleThroughSecond();
+		callFunctionByButtonPushed();
 		switch (screen_index)
 		{
 			case 0:
