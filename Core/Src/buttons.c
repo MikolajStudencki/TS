@@ -48,6 +48,9 @@ static void (*btn_down_fun)();
 static void (*btn_left_fun)();
 static void (*btn_mid_fun)();
 static void (*btn_right_fun)();
+
+static buttonsKey last_btn;
+static GPIO_PinState last_btn_state;
 /************************************** Public functions **************************************/
 buttonsKey getPushedButton(void)
 {
@@ -55,6 +58,13 @@ buttonsKey getPushedButton(void)
 	{
 		if (getButtonState(buttons[button_key]) == GPIO_PIN_RESET)
 		{
+			if (last_btn == button_key &&
+				last_btn_state == GPIO_PIN_RESET)
+			{
+				break;
+			}
+			last_btn = button_key;
+			last_btn_state = GPIO_PIN_RESET;
 			return button_key;
 		}
 	}
@@ -79,6 +89,9 @@ void callFunctionByButtonPushed()
 			break;
 		case BTN_RIGHT:
 			btn_right_fun();
+			break;
+		default:
+			last_btn_state = getButtonState(buttons[last_btn]);
 			break;
 	}
 }
