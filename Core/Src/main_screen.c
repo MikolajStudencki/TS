@@ -7,12 +7,14 @@
  */
 
 #include "main_screen.h"
+#include "temp_meter.h"
 
-static void displayCurrentDate(Lcd_HandleTypeDef *lcd);
-static void displayCurrentTime(Lcd_HandleTypeDef *lcd);
-static void displayCurrentTemperature(Lcd_HandleTypeDef *lcd, ADC_HandleTypeDef *hadc1);
-static void displayAlaramTemperature(Lcd_HandleTypeDef *lcd);
-static void refreshTemperatureDisplayEverySecond(Lcd_HandleTypeDef *lcd, ADC_HandleTypeDef *hadc1);
+static void displayCurrentDate(void);
+static void displayCurrentTime(void);
+static void displayCurrentTemperature(void);
+static void displayAlaramTemperature(void);
+static void refreshTemperatureDisplayEverySecond(void);
+static void displayAlarmsCounter(void);
 
 static uint32_t end_time;
 static uint32_t start_time;
@@ -20,15 +22,23 @@ static uint32_t start_time;
 static int8_t temperature;
 static int8_t alarmTemperature;
 
-void displayMainScreen(Lcd_HandleTypeDef *lcd, ADC_HandleTypeDef *hadc1)
+static Lcd_HandleTypeDef *lcd;
+
+void mainScreenInit(Lcd_HandleTypeDef *lcd_var)
 {
-	displayCurrentTime(lcd);
-	displayCurrentDate(lcd);
-	refreshTemperatureDisplayEverySecond(lcd, hadc1);
-	displayAlaramTemperature(lcd);
+	lcd = lcd_var;
 }
 
-static void displayCurrentDate(Lcd_HandleTypeDef *lcd)
+void displayMainScreen()
+{
+	displayCurrentTime();
+	displayCurrentDate();
+	refreshTemperatureDisplayEverySecond();
+	displayAlaramTemperature();
+	displayAlarmsCounter();
+}
+
+static void displayCurrentDate()
 {
 	Lcd_cursor(lcd, 0, 6);
 	Lcd_displayDate(lcd,
@@ -37,7 +47,7 @@ static void displayCurrentDate(Lcd_HandleTypeDef *lcd)
 			getDateTimeByKey(Day).currentValue);
 }
 
-static void displayCurrentTime(Lcd_HandleTypeDef *lcd)
+static void displayCurrentTime()
 {
 	Lcd_cursor(lcd, 1, 8);
 	Lcd_displayTime(lcd,
@@ -47,41 +57,31 @@ static void displayCurrentTime(Lcd_HandleTypeDef *lcd)
 
 }
 
-static void displayCurrentTemperature(Lcd_HandleTypeDef *lcd, ADC_HandleTypeDef *hadc1)
+static void displayCurrentTemperature()
 {
-	temperature = getCurrentTemperature(hadc1);
-
-	Lcd_cursor(lcd, 0, 0);
-	if (temperature < 10)
-	{
-		Lcd_int(lcd, 0);
-	}
-	Lcd_int(lcd, (temperature % 100));
-
-	Lcd_string(lcd, "\x01");
+	temperature = getCurrentTemperature();
+	displayTemperature(temperature, 0, 0, 'n');
 }
 
-static void displayAlaramTemperature(Lcd_HandleTypeDef *lcd)
+static void displayAlaramTemperature()
 {
 	alarmTemperature = getAlarmTemperature();
-
-	Lcd_cursor(lcd, 1, 0);
-	if (alarmTemperature < 10)
-	{
-		Lcd_int(lcd, 0);
-	}
-	Lcd_int(lcd, (alarmTemperature % 100));
-
-	Lcd_string(lcd, "\x02");
+	displayTemperature(alarmTemperature, 1, 0, 'a');
 }
 
-static void refreshTemperatureDisplayEverySecond(Lcd_HandleTypeDef *lcd, ADC_HandleTypeDef *hadc1)
+static void displayAlarmsCounter()
+{
+	Lcd_cursor(lcd, 1, 4);
+	Lcd_int(lcd, getAlarmsCounter());
+}
+
+static void refreshTemperatureDisplayEverySecond()
 {
 	end_time = HAL_GetTick();
 
 	if(end_time - start_time >= 1000)
 	{
-		displayCurrentTemperature(lcd, hadc1);
+		displayCurrentTemperature();
 		start_time = end_time;
 	}
 }

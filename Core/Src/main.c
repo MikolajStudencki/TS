@@ -26,6 +26,7 @@
 #include "buttons.h"
 #include "datetime.h"
 #include "lcd_characters.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -72,7 +73,7 @@ static Lcd_PinType pins[] = {
 Lcd_HandleTypeDef lcd;
 
 static uint8_t screen_index = 0;
-static const uint8_t max_screen_index = 1;
+static const uint8_t max_screen_index = 2;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -86,15 +87,12 @@ static void MX_TIM11_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
-static void incrementDisplayIndex(void);
-static void decrementDisplayIndex(void);
-static void doNothing(void);
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-static void incrementDisplayIndex()
+void incrementDisplayIndex()
 {
 	Lcd_clear(&lcd);
 	if (screen_index == max_screen_index)
@@ -107,7 +105,7 @@ static void incrementDisplayIndex()
 	}
 }
 
-static void decrementDisplayIndex()
+void decrementDisplayIndex()
 {
 	Lcd_clear(&lcd);
 	if (screen_index == 0)
@@ -120,7 +118,7 @@ static void decrementDisplayIndex()
 	}
 }
 
-static void doNothing() {}
+void doNothing() {}
 /* USER CODE END 0 */
 
 /**
@@ -173,11 +171,15 @@ int main(void)
 	Lcd_define_char(&lcd, 3, arrowUpChar);
 	Lcd_define_char(&lcd, 4, arrowDownChar);
 
-	set_btn_up_fun(&doNothing);
-	set_btn_down_fun(&doNothing);
-	set_btn_left_fun(&decrementDisplayIndex);
-	set_btn_mid_fun(&doNothing);
-	set_btn_right_fun(&incrementDisplayIndex);
+	mainScreenInit(&lcd);
+	changeTemperatureScreenInit(&lcd);
+	tempMeterInit(&lcd, &hadc1);
+
+	setBtnUpFun(&doNothing);
+	setBtnDownFun(&doNothing);
+	setBtnLeftFun(&decrementDisplayIndex);
+	setBtnMidFun(&doNothing);
+	setBtnRightFun(&incrementDisplayIndex);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -189,12 +191,16 @@ int main(void)
 		switch (screen_index)
 		{
 			case 0:
-				displayMainScreen(&lcd, &hadc1);
+				displayMainScreen();
 				break;
 			case 1:
 				displayChangeDateTimeScreen(&lcd);
 				break;
+			case 2:
+				displayChangeTemperatureScreen();
+				break;
 		}
+		checkTemperatureState();
 	}
     /* USER CODE END WHILE */
     MX_USB_HOST_Process();

@@ -86,21 +86,21 @@
  *	\return uint8_t Maximum value of inserted month.
  */
 
-#include "stm32f4xx_hal.h"
-#include "main.h"
 #include "lcd.h"
 
 /************************************** Public enums **************************************/
-typedef enum {
+typedef enum
+{
 	Second, //!< Representation of [0] index in dateTimeMap.
 	Minute, //!< Representation of [1] index in dateTimeMap.
 	Hour, //!< Representation of [2] index in dateTimeMap.
-	Month, //!< Representation of [3] index in dateTimeMap.
-	Day, //!< Representation of [4] index in dateTimeMap.
+	Day, //!< Representation of [3] index in dateTimeMap.
+	Month, //!< Representation of [4] index in dateTimeMap.
 	Year //!< Representation of [5] index in dateTimeMap.
 } dateTimeKey;
 
-typedef enum {
+typedef enum
+{
 	Jan = 1, //!< Representation of January month with [1] index.
 	Feb = 2, //!< Representation of February month with [2] index.
 	Mar = 3, //!< Representation of March month with [3] index.
@@ -122,6 +122,16 @@ typedef struct
 	uint16_t maxValue; //!< Maximum value of dateTime variable.
 	uint8_t minValue; //!< Minimum value of dateTime variable.
 } dateTime;
+
+typedef struct
+{
+	uint16_t year;
+	uint8_t month;
+	uint8_t day;
+	uint8_t hour;
+	uint8_t minute;
+	uint8_t second;
+} dateUnit;
 
 /************************************** Public function prototypes **************************************/
 void Lcd_displayTime(Lcd_HandleTypeDef *lcd, uint8_t hour_var, uint8_t minute_var, uint8_t second_var);

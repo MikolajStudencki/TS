@@ -1,4 +1,5 @@
 #include "change_datetime_screen.h"
+#include "datetime.h"
 
 static void displayDate(Lcd_HandleTypeDef *lcd);
 static void displayTime(Lcd_HandleTypeDef *lcd);
