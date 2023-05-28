@@ -86,15 +86,15 @@ static void MX_TIM11_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
-static void incrementDisplayIndex(void);
-static void decrementDisplayIndex(void);
-static void doNothing(void);
+void incrementDisplayIndex(void);
+void decrementDisplayIndex(void);
+void doNothing(void);
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-static void incrementDisplayIndex()
+void incrementDisplayIndex()
 {
 	Lcd_clear(&lcd);
 	if (screen_index == max_screen_index)
@@ -107,7 +107,7 @@ static void incrementDisplayIndex()
 	}
 }
 
-static void decrementDisplayIndex()
+void decrementDisplayIndex()
 {
 	Lcd_clear(&lcd);
 	if (screen_index == 0)
@@ -120,7 +120,7 @@ static void decrementDisplayIndex()
 	}
 }
 
-static void doNothing() {}
+void doNothing() {}
 /* USER CODE END 0 */
 
 /**
