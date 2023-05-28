@@ -8,6 +8,9 @@
 #include "lcd.h"
 const uint8_t ROW_16[] = {0x00, 0x40, 0x10, 0x50};
 const uint8_t ROW_20[] = {0x00, 0x40, 0x14, 0x54};
+static uint32_t end_time;
+static uint32_t start_time;
+static uint8_t counter = 0;
 /************************************** Static declarations **************************************/
 
 static void lcd_write_data(Lcd_HandleTypeDef * lcd, uint8_t data);
@@ -80,6 +83,44 @@ void Lcd_float(Lcd_HandleTypeDef * lcd, float number)
 	sprintf(buffer, "%.2f", number);
 
 	Lcd_string(lcd, buffer);
+}
+
+void Lcd_blink(Lcd_HandleTypeDef *lcd, uint8_t row, uint8_t col, uint32_t length, DisplayFunction display_var)
+{
+	char emptyCharArray[length];
+	end_time = HAL_GetTick();
+
+	for (int i = 0; i < length; i++)
+	{
+		emptyCharArray[i] = ' ';
+	}
+	emptyCharArray[length] = '\0';
+
+	if(end_time - start_time >= 1000)
+	{
+		switch(counter)
+		{
+			case 0:
+			{
+				display_var(lcd);
+				start_time = end_time;
+				counter++;
+				break;
+			}
+			case 3:
+			{
+				counter = 0;
+				break;
+			}
+			default:
+			{
+				Lcd_cursor(lcd, row, col);
+				Lcd_string(lcd, emptyCharArray);
+				counter++;
+				break;
+			}
+		}
+	}
 }
 
 /**

@@ -158,6 +158,21 @@ dateTime getDateTimeByKey(dateTimeKey key)
 	return dateTimeMap[key];
 }
 
+void setDateTimeByKey(dateTimeKey key, uint16_t var)
+{
+	dateTimeMap[key].currentValue = var;
+}
+
+void setAll(uint16_t year_var, uint16_t month_var, uint16_t day_var, uint16_t hour_var, uint16_t minute_var, uint16_t second_var)
+{
+	year->currentValue = year_var;
+	month->currentValue = month_var;
+	day->currentValue = day_var;
+	hour->currentValue = hour_var;
+	minute->currentValue = minute_var;
+	second->currentValue = second_var;
+}
+
 void cycleThroughSecond()
 {
 	end_time = HAL_GetTick();
@@ -167,21 +182,6 @@ void cycleThroughSecond()
 		iterateDateTime();
 		start_time = end_time;
 	}
-}
-
-void setDate(uint16_t year_var, uint8_t month_var, uint8_t day_var)
-{
-	year->currentValue = year_var;
-	month->currentValue = month_var;
-	day->currentValue = day_var;
-	day->maxValue = getMaxDaysByMonth(month->currentValue);
-}
-
-void setTime(uint8_t hour_var, uint8_t minute_var, uint8_t second_var)
-{
-	hour->currentValue = hour_var;
-	minute->currentValue = minute_var;
-	second->currentValue = second_var;
 }
 
 uint8_t getMaxDaysByMonth(monthsKey month_key)

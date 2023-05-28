@@ -3,5 +3,6 @@
 #include "lcd.h"
 #include "lcd_characters.h"
 #include "datetime.h"
+#include "buttons.h"
 
 void displayChangeDateTimeScreen(Lcd_HandleTypeDef *lcd);
