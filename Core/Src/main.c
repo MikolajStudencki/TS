@@ -87,6 +87,12 @@ static void MX_TIM11_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
+<<<<<<< HEAD
+=======
+void incrementDisplayIndex(void);
+void decrementDisplayIndex(void);
+void doNothing(void);
+>>>>>>> main
 
 /* USER CODE END PFP */
 

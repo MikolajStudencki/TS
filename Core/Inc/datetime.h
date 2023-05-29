@@ -137,7 +137,7 @@ typedef struct
 void Lcd_displayTime(Lcd_HandleTypeDef *lcd, uint8_t hour_var, uint8_t minute_var, uint8_t second_var);
 void Lcd_displayDate(Lcd_HandleTypeDef *lcd, uint16_t year_var, uint8_t month_var, uint8_t day_var);
 void cycleThroughSecond();
-void setDate(uint16_t year_var, uint8_t month_var, uint8_t day_var);
-void setTime(uint8_t hour_var, uint8_t minute_var, uint8_t second_var);
 dateTime getDateTimeByKey(dateTimeKey key);
+void setDateTimeByKey(dateTimeKey key, uint16_t var);
+void setAll(uint16_t year_var, uint16_t month_var, uint16_t day_var, uint16_t hour_var, uint16_t minute_var, uint16_t second_var);
 uint8_t getMaxDaysByMonth(monthsKey month_key);
