@@ -1,6 +1,7 @@
 #include "history_screen.h"
 #include "temp_meter.h"
 #include "buttons.h"
+#include "screens_manager.h"
 
 static void handleDisplayStatusZero(void);
 static void handleDisplayStatusOne(void);

@@ -30,6 +30,7 @@
 #include "change_temperature_screen.h"
 #include "history_screen.h"
 #include "temp_meter.h"
+#include "screens_manager.h"
 
 /* USER CODE END Includes */
 
@@ -76,7 +77,6 @@ static Lcd_PinType pins[] = {
 
 static Lcd_HandleTypeDef lcd;
 
-static const uint8_t max_screen_index = 3;
 static uint8_t screen_index = 0;
 static uint8_t last_screen_index = 0;
 /* USER CODE END PV */
@@ -92,52 +92,11 @@ static void MX_TIM11_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
-static void clearScreen(void);
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-static void clearScreen()
-{
-	if (last_screen_index != screen_index)
-	{
-		Lcd_clear(&lcd);
-	}
-}
-
-void incrementDisplayIndex()
-{
-	Lcd_clear(&lcd);
-	if (screen_index == max_screen_index)
-	{
-		screen_index = 0;
-	}
-	else
-	{
-		++screen_index;
-	}
-}
-
-void decrementDisplayIndex()
-{
-	Lcd_clear(&lcd);
-	if (screen_index == 0)
-	{
-		screen_index = max_screen_index;
-	}
-	else
-	{
-		--screen_index;
-	}
-}
-
-void doNothing() {}
-
-uint8_t getLastScreenIndex()
-{
-	return last_screen_index;
-}
 
 /* USER CODE END 0 */
 
@@ -192,6 +151,7 @@ int main(void)
 	Lcd_define_char(&lcd, 4, arrowDownChar);
 
 	tempMeterInit(&lcd, &hadc1);
+	screensManagerInit(&lcd, &last_screen_index, &screen_index);
 
 	mainScreenInit(&lcd);
 	changeTemperatureScreenInit(&lcd);
@@ -211,8 +171,7 @@ int main(void)
 	{
 		cycleThroughSecond();
 		callFunctionByButtonPushed();
-		clearScreen();
-		switch (screen_index)
+		switch (getScreenIndex())
 		{
 			case 0:
 				displayMainScreen();
@@ -227,7 +186,7 @@ int main(void)
 				displayHistoryScreen();
 				break;
 		}
-		last_screen_index = screen_index;
+		setLastScreenIndex();
 		checkTemperatureState();
 	}
     /* USER CODE END WHILE */

@@ -1,6 +1,7 @@
 #include "change_temperature_screen.h"
 #include "temp_meter.h"
 #include "buttons.h"
+#include "screens_manager.h"
 
 static void handleActionStatusZero(void);
 static void handleActionStatusOne(void);
@@ -44,12 +45,12 @@ void displayChangeTemperatureScreen()
 	{
 		displayArrowUp();
 		displayArrowDown();
+		setBtnUpFun(&upRowAction);
+		setBtnDownFun(&downRowAction);
 		setBtnMidFun(&changeActionStatus);
 	}
 
-	displayAlarmTemperature();
-	displayTurnOffAlarmTemperature();
-//	blinkOnCursor();
+	blinkOnCursor();
 
 	if (actionStatus != lastActionStatus)
 	{

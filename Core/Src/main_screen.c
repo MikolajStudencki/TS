@@ -8,6 +8,7 @@
 
 #include "main_screen.h"
 #include "temp_meter.h"
+#include "screens_manager.h"
 
 static void displayCurrentDate(void);
 static void displayCurrentTime(void);
