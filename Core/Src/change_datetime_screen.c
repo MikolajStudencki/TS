@@ -1,4 +1,5 @@
 #include "change_datetime_screen.h"
+#include "datetime.h"
 
 static uint8_t row_index = 0;
 static const uint8_t max_row_index = 1;

@@ -7,7 +7,6 @@
  */
 
 #include "lcd.h"
-#include "datetime.h"
-#include "temp_meter.h"
 
-void displayMainScreen(Lcd_HandleTypeDef *lcd, ADC_HandleTypeDef *hadc1);
+void mainScreenInit(Lcd_HandleTypeDef *lcd_var);
+void displayMainScreen(void);

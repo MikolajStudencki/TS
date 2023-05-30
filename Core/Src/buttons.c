@@ -96,27 +96,27 @@ void callFunctionByButtonPushed()
 	}
 }
 
-void set_btn_up_fun(void (*btn_up_fun_var)())
+void setBtnUpFun(void (*btn_up_fun_var)())
 {
 	btn_up_fun = btn_up_fun_var;
 }
 
-void set_btn_down_fun(void (*btn_down_fun_var)())
+void setBtnDownFun(void (*btn_down_fun_var)())
 {
 	btn_down_fun = btn_down_fun_var;
 }
 
-void set_btn_left_fun(void (*btn_left_fun_var)())
+void setBtnLeftFun(void (*btn_left_fun_var)())
 {
 	btn_left_fun = btn_left_fun_var;
 }
 
-void set_btn_mid_fun(void (*btn_mid_fun_var)())
+void setBtnMidFun(void (*btn_mid_fun_var)())
 {
 	btn_mid_fun = btn_mid_fun_var;
 }
 
-void set_btn_right_fun(void (*btn_right_fun_var)())
+void setBtnRightFun(void (*btn_right_fun_var)())
 {
 	btn_right_fun = btn_right_fun_var;
 }

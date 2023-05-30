@@ -36,6 +36,13 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+typedef enum
+{
+	Main_Screen,
+	Change_Time_Screen,
+	Change_Temperature_Screen,
+	Alarms_History_Screen
+} screens;
 
 /* USER CODE END ET */
 
@@ -53,6 +60,10 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
+void doNothing(void);
+void incrementDisplayIndex(void);
+void decrementDisplayIndex(void);
+uint8_t getLastScreenIndex(void);
 
 /* USER CODE END EFP */
 
