@@ -1,3 +1,136 @@
+/*!
+ *	\fn static void onFirstCall()
+ *	\brief Function called on the first run of the class.
+ */
+
+/*!
+ *	\fn static void blinkDatePart()
+ *	\brief Function to blink the date part of the screen, and specific parameters.
+ */
+
+/*!
+ *	\fn static void blinkTimePart()
+ *	\brief Function to blink the time part of the screen, and specific parameters.
+ */
+
+/*!
+ *	\fn static void onChange()
+ *	\brief Function called when a parameters of date or time are modified is changed.
+ */
+
+/*!
+ *	\var static void displayDate()
+ *	\brief Function to display the date on the screen.
+ */
+
+/*!
+ *	\var static void displayTime()
+ *	\brief Function to display the time on the screen.
+ */
+
+/*!
+ *	\var static void displayArrowUp()
+ *	\brief Function to display the up arrow on the screen.
+ */
+
+/*!
+ *	\var static void displayArrowDown()
+ *	\brief Function to display the down arrow on the screen.
+ */
+
+/*!
+ *	\var static void incrementRowIndex()
+ *	\brief Function to increment the row index.
+ */
+
+/*!
+ *	\var static void decrementRowIndex()
+ *	\brief Function to decrement the row index.
+ */
+
+/*!
+ *	\var static void dateChange()
+ *	\brief Function to handle the date change.
+ */
+
+/*!
+ *	\var static dateTime dateTimeMap[6]
+ * 	\brief Array of dateTime variables.
+ *
+ * 	Map indexes: [0] second, [1] minute, [2] hour, [3] day, [4] month, [5] year.
+ */
+
+/*!
+ *	\var static uint8_t row_index
+ *	\brief Current row index.
+ */
+
+/*!
+ *	\var static uint8_t date_position
+ *	\brief Current date position.
+ */
+
+/*!
+ *	\var static uint8_t time_position
+ *	\brief Current time position.
+ */
+
+/*!
+ *	\var static dateTimeKey key
+ *	\brief Current dateTimeKey value.
+ */
+
+/*!
+ *	\var static uint8_t was_changed
+ *	\brief Flag to indicate if a value was changed.
+ */
+
+/*!
+ *	\var static Lcd_HandleTypeDef *lcd
+ *	\brief Pointer to the LCD handle structure.
+ */
+
+/*!
+ *	\var static dateTime *second
+ * 	\brief Pointer to a "second" dateTime variable in dateTimeMap.
+ */
+
+/*!
+ *	\var static dateTime *minute
+ * 	\brief Pointer to a "minute" dateTime variable in dateTimeMap.
+ */
+
+/*!
+ *	\var static dateTime *hour
+ * 	\brief Pointer to an "hour" dateTime variable in dateTimeMap.
+ */
+
+/*!
+ *	\var static dateTime *day
+ * 	\brief Pointer to a "day" dateTime variable in dateTimeMap.
+ */
+
+/*!
+ *	\var static dateTime *month
+ * 	\brief Pointer to a "month" dateTime variable in dateTimeMap.
+ */
+
+/*!
+ *	\var static dateTime *year
+ * 	\brief Pointer to a "year" dateTime variable in dateTimeMap.
+ */
+
+/*!
+ *	\fn void changeDateTimeScreenInit(Lcd_HandleTypeDef *lcd_var)
+ *	\brief Initializes the change date and time screen.
+ *	\param Pointer to the LCD handle structure.
+ */
+
+/*!
+ *	\fn void displayChangeDateTimeScreen()
+ *	\brief Displays the date and time on the LCD and enables modification of the specific parameters.
+ */
+
 #include "change_datetime_screen.h"
 #include "datetime.h"
 #include "buttons.h"
