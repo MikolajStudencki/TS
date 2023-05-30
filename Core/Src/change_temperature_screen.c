@@ -2,14 +2,22 @@
 #include "temp_meter.h"
 #include "buttons.h"
 
+static void handleActionStatusZero(void);
+static void handleActionStatusOne(void);
+
 static void displayArrowUp(void);
 static void displayArrowDown(void);
+
 static void displayAlarmTemperature(void);
 static void displayTurnOffAlarmTemperature(void);
+
 static void setLocalTemperatures(void);
+
 static void changeActionStatus(void);
+
 static void upRowAction(void);
 static void downRowAction(void);
+
 static void incrementSelectedTemperatureValue(void);
 static void decrementSelectedTemperatureValue(void);
 
@@ -30,31 +38,45 @@ void changeTemperatureScreenInit(Lcd_HandleTypeDef *lcd_var)
 
 void displayChangeTemperatureScreen()
 {
-	displayArrowUp();
-	displayArrowDown();
+	if (getLastScreenIndex() != Change_Temperature_Screen)
+	{
+		displayArrowUp();
+		displayArrowDown();
+		setBtnMidFun(&changeActionStatus);
+	}
+
 	displayAlarmTemperature();
 	displayTurnOffAlarmTemperature();
-	setBtnMidFun(&changeActionStatus);
 
 	if (actionStatus != lastActionStatus)
 	{
 		switch (actionStatus)
 		{
 			case 0:
-				lastActionStatus = 0;
-				setAlarmTemperature(alarmTemperature);
-				setTurnOffAlarmTemperature(turnOff_alarmTemperature);
-				setLocalTemperatures();
-				setBtnLeftFun(&decrementDisplayIndex);
-				setBtnRightFun(&incrementDisplayIndex);
+				handleActionStatusZero();
 				break;
 			case 1:
-				lastActionStatus = 1;
-				setBtnLeftFun(&doNothing);
-				setBtnRightFun(&doNothing);
+				handleActionStatusOne();
 				break;
 		}
 	}
+}
+
+static void handleActionStatusZero()
+{
+	lastActionStatus = 0;
+	setAlarmTemperature(alarmTemperature);
+	setTurnOffAlarmTemperature(turnOff_alarmTemperature);
+	setLocalTemperatures();
+	setBtnLeftFun(&decrementDisplayIndex);
+	setBtnRightFun(&incrementDisplayIndex);
+}
+
+static void handleActionStatusOne()
+{
+	lastActionStatus = 1;
+	setBtnLeftFun(&doNothing);
+	setBtnRightFun(&doNothing);
 }
 
 static void displayArrowUp()
@@ -71,12 +93,14 @@ static void displayArrowDown()
 
 static void displayAlarmTemperature()
 {
-	displayTemperature(alarmTemperature, 0, 1, 'a');
+	Lcd_cursor(lcd, 0, 1);
+	Lcd_displayTemperature(lcd, alarmTemperature, 'a');
 }
 
 static void displayTurnOffAlarmTemperature()
 {
-	displayTemperature(turnOff_alarmTemperature, 1, 1, 'n');
+	Lcd_cursor(lcd, 1, 1);
+	Lcd_displayTemperature(lcd, turnOff_alarmTemperature, 'n');
 }
 
 static void setLocalTemperatures()

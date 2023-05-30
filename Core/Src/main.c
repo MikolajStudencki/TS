@@ -24,8 +24,12 @@
 /* USER CODE BEGIN Includes */
 #include "lcd.h"
 #include "buttons.h"
-#include "datetime.h"
 #include "lcd_characters.h"
+#include "main_screen.h"
+#include "change_datetime_screen.h"
+#include "change_temperature_screen.h"
+#include "history_screen.h"
+#include "temp_meter.h"
 
 /* USER CODE END Includes */
 
@@ -70,10 +74,11 @@ static Lcd_PinType pins[] = {
 		LCD_DB7_Pin
 };
 
-Lcd_HandleTypeDef lcd;
+static Lcd_HandleTypeDef lcd;
 
+static const uint8_t max_screen_index = 3;
 static uint8_t screen_index = 0;
-static const uint8_t max_screen_index = 2;
+static uint8_t last_screen_index = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -87,17 +92,20 @@ static void MX_TIM11_Init(void);
 void MX_USB_HOST_Process(void);
 
 /* USER CODE BEGIN PFP */
-<<<<<<< HEAD
-=======
-void incrementDisplayIndex(void);
-void decrementDisplayIndex(void);
-void doNothing(void);
->>>>>>> main
+static void clearScreen(void);
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+static void clearScreen()
+{
+	if (last_screen_index != screen_index)
+	{
+		Lcd_clear(&lcd);
+	}
+}
+
 void incrementDisplayIndex()
 {
 	Lcd_clear(&lcd);
@@ -125,6 +133,12 @@ void decrementDisplayIndex()
 }
 
 void doNothing() {}
+
+uint8_t getLastScreenIndex()
+{
+	return last_screen_index;
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -177,9 +191,12 @@ int main(void)
 	Lcd_define_char(&lcd, 3, arrowUpChar);
 	Lcd_define_char(&lcd, 4, arrowDownChar);
 
+	tempMeterInit(&lcd, &hadc1);
+
 	mainScreenInit(&lcd);
 	changeTemperatureScreenInit(&lcd);
-	tempMeterInit(&lcd, &hadc1);
+	ChangeDateTimeScreenInit(&lcd);
+	historyScreenInit(&lcd);
 
 	setBtnUpFun(&doNothing);
 	setBtnDownFun(&doNothing);
@@ -194,18 +211,23 @@ int main(void)
 	{
 		cycleThroughSecond();
 		callFunctionByButtonPushed();
+		clearScreen();
 		switch (screen_index)
 		{
 			case 0:
 				displayMainScreen();
 				break;
 			case 1:
-				displayChangeDateTimeScreen(&lcd);
+				displayChangeDateTimeScreen();
 				break;
 			case 2:
 				displayChangeTemperatureScreen();
 				break;
+			case 3:
+				displayHistoryScreen();
+				break;
 		}
+		last_screen_index = screen_index;
 		checkTemperatureState();
 	}
     /* USER CODE END WHILE */

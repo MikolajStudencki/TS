@@ -60,13 +60,15 @@ static void displayCurrentTime()
 static void displayCurrentTemperature()
 {
 	temperature = getCurrentTemperature();
-	displayTemperature(temperature, 0, 0, 'n');
+	Lcd_cursor(lcd, 0, 0);
+	Lcd_displayTemperature(lcd, temperature, 'n');
 }
 
 static void displayAlaramTemperature()
 {
 	alarmTemperature = getAlarmTemperature();
-	displayTemperature(alarmTemperature, 1, 0, 'a');
+	Lcd_cursor(lcd, 1, 0);
+	Lcd_displayTemperature(lcd, alarmTemperature, 'a');
 }
 
 static void displayAlarmsCounter()

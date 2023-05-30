@@ -2,13 +2,18 @@
 #include "stdlib.h"
 
 static void readTemperatureSensorVoltage(void);
+
 static void checkAlarmState(void);
 static void addStateToHistory(void);
+
+static void checkWhenAlarmTemperatureIsHigherThanTurnOffAlarm(void);
+static void checkWhenAlarmTemperatureIsLowerThanTurnOffAlarm(void);
 
 static const uint16_t adc_range = 4095;
 static const float adc_v_ref = 3.3;
 static float adc_value;
 static float adc_voltage;
+
 static int8_t temperature;
 static int8_t alarmTemperature = 28;
 static int8_t turnOff_alarmTemperature = 25;
@@ -62,18 +67,8 @@ int8_t getTurnOffAlarmTemperature()
 	return turnOff_alarmTemperature;
 }
 
-static void readTemperatureSensorVoltage()
+void Lcd_displayTemperature(Lcd_HandleTypeDef *lcd_var, int8_t temp_var, char tempType)
 {
-	HAL_ADC_Start(hadc1);
-	HAL_ADC_PollForConversion(hadc1, HAL_MAX_DELAY);
-	adc_value = HAL_ADC_GetValue(hadc1);
-	adc_voltage = adc_value * (adc_v_ref / adc_range);
-}
-
-void displayTemperature(int8_t temp_var, uint8_t row_var, uint8_t col_var, char tempType)
-{
-	Lcd_cursor(lcd, row_var, col_var);
-
 	if (tempType == 'a')
 	{
 		celDisplayChar = "\x02";
@@ -85,32 +80,61 @@ void displayTemperature(int8_t temp_var, uint8_t row_var, uint8_t col_var, char 
 
 	if (temp_var < -9)
 	{
-		Lcd_int(lcd, temp_var);
-		Lcd_string(lcd, celDisplayChar);
+		Lcd_int(lcd_var, temp_var);
+		Lcd_string(lcd_var, celDisplayChar);
 	}
 	else if (temp_var < 0)
 	{
-		Lcd_string(lcd, "-");
-		Lcd_int(lcd, 0);
-		Lcd_int(lcd, temp_var * (-1));
-		Lcd_string(lcd, celDisplayChar);
+		Lcd_string(lcd_var, "-");
+		Lcd_int(lcd_var, 0);
+		Lcd_int(lcd_var, temp_var * (-1));
+		Lcd_string(lcd_var, celDisplayChar);
 	}
 	else if (temp_var < 10)
 	{
-		Lcd_int(lcd, 0);
-		Lcd_int(lcd, temp_var);
-		Lcd_string(lcd, celDisplayChar);
-		Lcd_string(lcd, " ");
+		Lcd_int(lcd_var, 0);
+		Lcd_int(lcd_var, temp_var);
+		Lcd_string(lcd_var, celDisplayChar);
+		Lcd_string(lcd_var, " ");
 	}
 	else
 	{
-		Lcd_int(lcd, temp_var);
-		Lcd_string(lcd, celDisplayChar);
-		Lcd_string(lcd, " ");
+		Lcd_int(lcd_var, temp_var);
+		Lcd_string(lcd_var, celDisplayChar);
+		Lcd_string(lcd_var, " ");
 	}
 }
 
 void checkTemperatureState()
+{
+	if (alarmTemperature > turnOff_alarmTemperature)
+	{
+		checkWhenAlarmTemperatureIsHigherThanTurnOffAlarm();
+	}
+	else
+	{
+		checkWhenAlarmTemperatureIsLowerThanTurnOffAlarm();
+	}
+	checkAlarmState();
+}
+
+void clearCounterHistory()
+{
+	alarmsCounter = 0;
+	alarmsHistory = realloc(alarmsHistory, alarmsCounter * sizeof (temperatureHistory));
+}
+
+uint16_t getAlarmsCounter()
+{
+	return alarmsCounter;
+}
+
+temperatureHistory *getTemperatureHistory()
+{
+	return alarmsHistory;
+}
+
+static void checkWhenAlarmTemperatureIsHigherThanTurnOffAlarm()
 {
 	if (getCurrentTemperature() >= alarmTemperature)
 	{
@@ -136,15 +160,38 @@ void checkTemperatureState()
 	checkAlarmState();
 }
 
-void clearCounterHistory()
+static void checkWhenAlarmTemperatureIsLowerThanTurnOffAlarm()
 {
-	alarmsCounter = 0;
-	alarmsHistory = realloc(alarmsHistory, alarmsCounter * sizeof (temperatureHistory));
+	if (getCurrentTemperature() <= alarmTemperature)
+	{
+		if (lastAlarmState == 0)
+		{
+			addStateToHistory();
+		}
+
+		alarmState = 1;
+		lastAlarmState = 1;
+		timer = HAL_GetTick();
+	}
+	else if (getCurrentTemperature() >= turnOff_alarmTemperature)
+	{
+		if (lastAlarmState == 1)
+		{
+			alarmsHistory[alarmsCounter - 1].alarmDuration = HAL_GetTick() - timer;
+		}
+
+		alarmState = 0;
+		lastAlarmState = 0;
+	}
+	checkAlarmState();
 }
 
-uint16_t getAlarmsCounter()
+static void readTemperatureSensorVoltage()
 {
-	return alarmsCounter;
+	HAL_ADC_Start(hadc1);
+	HAL_ADC_PollForConversion(hadc1, HAL_MAX_DELAY);
+	adc_value = HAL_ADC_GetValue(hadc1);
+	adc_voltage = adc_value * (adc_v_ref / adc_range);
 }
 
 static void checkAlarmState()
