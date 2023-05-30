@@ -30,6 +30,9 @@ static void handleClearHistoryDisplay(void);
 
 static void backToMainHistoryScreen(void);
 
+static void handleDisplayStatusZeroBlinkOnCursor(void);
+static void handleDisplayStatusOneBlinkOnCursor(void);
+
 static Lcd_HandleTypeDef *lcd;
 
 static uint8_t displayStatus = 0;
@@ -82,8 +85,7 @@ static void handleDisplayStatusZero()
 		setBtnMidFun(&changeActionStatus);
 	}
 
-	displayCleanHistory();
-	displayCheckHistory();
+	handleDisplayStatusZeroBlinkOnCursor();
 }
 
 static void handleDisplayStatusOne()
@@ -104,9 +106,7 @@ static void handleDisplayStatusOne()
 
 		setBtnMidFun(&changeActionStatus);
 	}
-
-	displayClean();
-	displayCancel();
+	handleDisplayStatusOneBlinkOnCursor();
 }
 
 static void handleDisplayStatusTwo()
@@ -272,4 +272,36 @@ static void handleClearHistoryDisplay()
 static void backToMainHistoryScreen()
 {
 	displayStatus = 0;
+}
+
+static void handleDisplayStatusZeroBlinkOnCursor()
+{
+	switch(selectedRow)
+	{
+		case 0:
+			Lcd_blink(lcd, 0, 1, 13, &displayCleanHistory);
+			displayCheckHistory();
+			break;
+
+		case 1:
+			Lcd_blink(lcd, 1, 1, 13, &displayCheckHistory);
+			displayCleanHistory();
+			break;
+	}
+}
+
+static void handleDisplayStatusOneBlinkOnCursor()
+{
+	switch(selectedRow)
+	{
+		case 0:
+			Lcd_blink(lcd, 0, 1, 5, &displayClean);
+			displayCancel();
+			break;
+
+		case 1:
+			Lcd_blink(lcd, 1, 1, 6, &displayCancel);
+			displayClean();
+			break;
+	}
 }

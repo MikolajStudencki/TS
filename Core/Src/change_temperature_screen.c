@@ -40,16 +40,13 @@ void changeTemperatureScreenInit(Lcd_HandleTypeDef *lcd_var)
 
 void displayChangeTemperatureScreen()
 {
-	if (getLastScreenIndex() != Change_Temperature_Screen)
-	{
-		displayArrowUp();
-		displayArrowDown();
-		setBtnMidFun(&changeActionStatus);
-	}
+	displayArrowUp();
+	displayArrowDown();
+	setBtnMidFun(&changeActionStatus);
 
-	displayAlarmTemperature();
-	displayTurnOffAlarmTemperature();
-//	blinkOnCursor();
+	blinkOnCursor();
+//	displayAlarmTemperature();
+//	displayTurnOffAlarmTemperature();
 
 	if (actionStatus != lastActionStatus)
 	{

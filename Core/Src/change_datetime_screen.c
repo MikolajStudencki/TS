@@ -137,7 +137,6 @@ void displayChangeDateTimeScreen()
 	setBtnMidFun(&dateChange);
 	displayArrowUp();
 	displayArrowDown();
-	callFunctionByButtonPushed();
 	switch (row_index)
 	{
 		case 0:
