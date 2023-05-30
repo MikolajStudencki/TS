@@ -195,7 +195,7 @@ int main(void)
 
 	mainScreenInit(&lcd);
 	changeTemperatureScreenInit(&lcd);
-	ChangeDateTimeScreenInit(&lcd);
+	changeDateTimeScreenInit(&lcd);
 	historyScreenInit(&lcd);
 
 	setBtnUpFun(&doNothing);

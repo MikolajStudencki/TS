@@ -1,30 +1,68 @@
 #include "change_datetime_screen.h"
 #include "datetime.h"
+#include "buttons.h"
 
 static uint8_t row_index = 0;
 static const uint8_t max_row_index = 1;
 static uint8_t date_position = 0;
 static uint8_t time_position = 0;
 static dateTimeKey key;
-static dateTime date;
 static uint8_t was_changed = 0;
-static uint16_t year;
-static uint16_t month;
-static uint16_t day;
-static uint16_t hour;
-static uint16_t minute;
-static uint16_t second;
+static Lcd_HandleTypeDef *lcd;
 
-static void displayDate(Lcd_HandleTypeDef *lcd);
-static void displayTime(Lcd_HandleTypeDef *lcd);
-static void displayArrowUp(Lcd_HandleTypeDef *lcd);
-static void displayArrowDown(Lcd_HandleTypeDef *lcd);
+static void displayDate();
+static void displayTime();
+static void displayArrowUp();
+static void displayArrowDown();
 void incrementDisplayIndex(void);
 void decrementDisplayIndex(void);
 
-//static uint8_t selectedIndexX;
-//static uint8_t selectedIndexY;
-//static uint8_t isChangeToggled;
+static dateTime dateTimeMap[6] =
+{
+		{
+				.currentValue = 30,
+				.maxValue = 59,
+				.minValue = 0
+		},
+		{
+				.currentValue = 59,
+				.maxValue = 59,
+				.minValue = 0
+		},
+		{
+				.currentValue = 23,
+				.maxValue = 23,
+				.minValue = 0
+		},
+		{
+				.currentValue = 19,
+				.maxValue = 31,
+				.minValue = 1
+		},
+		{
+				.currentValue = May,
+				.maxValue = 12,
+				.minValue = 1
+		},
+		{
+				.currentValue = 2023,
+				.maxValue = 9999,
+				.minValue = 0
+		}
+
+};
+
+static dateTime *second = &dateTimeMap[Second];
+static dateTime *minute = &dateTimeMap[Minute];
+static dateTime *hour = &dateTimeMap[Hour];
+static dateTime *day = &dateTimeMap[Day];
+static dateTime *month = &dateTimeMap[Month];
+static dateTime *year = &dateTimeMap[Year];
+
+void changeDateTimeScreenInit(Lcd_HandleTypeDef *lcd_var)
+{
+	lcd = lcd_var;
+}
 
 static void incrementRowIndex()
 {
@@ -40,91 +78,65 @@ static void incrementRowIndex()
 
 static void incrementValue()
 {
-	date = getDateTimeByKey(key);
-	switch(key)
-	{
-		case Second:
-			if(second == date.maxValue)
-			{
-				second = date.minValue;
-			}
-			else
-			{
-				++second;
-			}
-			break;
-		default:
-			if(date.currentValue == date.maxValue)
-			{
-				setDateTimeByKey(key, date.minValue);
-			}
-			else
-			{
-				setDateTimeByKey(key, ++date.currentValue);
-			}
-			break;
-	}
+    if(dateTimeMap[key].currentValue == dateTimeMap[key].maxValue)
+    {
+        dateTimeMap[key].currentValue = dateTimeMap[key].minValue;
+    }
+    else
+    {
+        ++dateTimeMap[key].currentValue;
+    }
+    Lcd_disableBlink();
 }
 
 static void decrementValue()
 {
-	date = getDateTimeByKey(key);
-	switch(key)
-	{
-		case Second:
-			if(second == date.minValue)
-			{
-				second = date.maxValue;
-			}
-			else
-			{
-				--second;
-			}
-			break;
-
-		default:
-			if(date.currentValue == date.minValue)
-			{
-				setDateTimeByKey(key, date.maxValue);
-			}
-			else
-			{
-				setDateTimeByKey(key, --date.currentValue);
-			}
-			break;
-	}
+    if(dateTimeMap[key].currentValue == dateTimeMap[key].minValue)
+    {
+        dateTimeMap[key].currentValue = dateTimeMap[key].maxValue;
+    }
+    else
+    {
+        --dateTimeMap[key].currentValue;
+    }
+    Lcd_disableBlink();
 }
 
 static void dateChange()
 {
-
-	set_btn_up_fun(&incrementValue);
-	set_btn_down_fun(&decrementValue);
+	setBtnUpFun(&incrementValue);
+	setBtnDownFun(&decrementValue);
+	setBtnLeftFun(&doNothing);
+	setBtnRightFun(&doNothing);
 	++date_position;
 	++time_position;
 }
 
-static void doNothing() {}
-
-void displayChangeDateTimeScreen(Lcd_HandleTypeDef *lcd)
+void displayChangeDateTimeScreen()
 {
+	dateTimeMap[Day].maxValue = getMaxDaysByMonth(dateTimeMap[Month].currentValue);
+
 	if(date_position == 0 && time_position == 0)
 	{
-		set_btn_up_fun(&incrementRowIndex);
-		set_btn_down_fun(&incrementRowIndex);
+		setBtnUpFun(&incrementRowIndex);
+		setBtnDownFun(&incrementRowIndex);
+		setBtnLeftFun(&decrementDisplayIndex);
+		setBtnRightFun(&incrementDisplayIndex);
+		was_changed = 0;
+		if(getLastScreenIndex() != Change_Time_Screen)
+		{
+			year->currentValue = getDateTimeByKey(Year).currentValue;
+			month->currentValue = getDateTimeByKey(Month).currentValue;
+			day->currentValue = getDateTimeByKey(Day).currentValue;
+			hour->currentValue = getDateTimeByKey(Hour).currentValue;
+			minute->currentValue = getDateTimeByKey(Minute).currentValue;
+			second->currentValue = getDateTimeByKey(Second).currentValue;
+		}
 	}
-	set_btn_mid_fun(&dateChange);
-	if(was_changed == 0)
-	{
-		year = getDateTimeByKey(Year).currentValue;
-		month = getDateTimeByKey(Month).currentValue;
-		day = getDateTimeByKey(Day).currentValue;
-		hour = getDateTimeByKey(Hour).currentValue;
-		minute = getDateTimeByKey(Minute).currentValue;
-		second = getDateTimeByKey(Second).currentValue;
-	}
-	displayArrowUp(lcd);
-	displayArrowDown(lcd);
+
+	setBtnMidFun(&dateChange);
+	displayArrowUp();
+	displayArrowDown();
 	callFunctionByButtonPushed();
 	switch (row_index)
 	{
@@ -133,100 +145,84 @@ void displayChangeDateTimeScreen(Lcd_HandleTypeDef *lcd)
 			switch(date_position)
 			{
 				case 0:
-					Lcd_blink(lcd, 0, 1, 10, displayDate);
-					displayTime(lcd);
+					Lcd_blink(lcd, 0, 1, 10, &displayDate);
 					break;
 				case 1:
+					was_changed = 1;
 					key = Year;
-					Lcd_blink(lcd, 0, 1, 4, displayDate);
-					displayTime(lcd);
+					Lcd_blink(lcd, 0, 1, 4, &displayDate);
 					break;
 				case 2:
 					key = Month;
-					Lcd_blink(lcd, 0, 6, 2, displayDate);
-					displayTime(lcd);
+					Lcd_blink(lcd, 0, 6, 2, &displayDate);
 					break;
 				case 3:
 					key = Day;
-					Lcd_blink(lcd, 0, 9, 2, displayDate);
-					displayTime(lcd);
+					Lcd_blink(lcd, 0, 9, 2, &displayDate);
 					break;
-				default:
-					was_changed = 1;
-					if(was_changed == 1)
-					{
-						setAll(year, month, day, hour, minute, second);
-						was_changed = 0;
-					}
-					date_position = 0;
-					time_position = 0;
-					break;
+				default:date_position = 0;
 			}
+			displayTime();
 			break;
+
 		case 1:
 			date_position = 0;
 			switch(time_position)
 			{
 				case 0:
-					displayDate(lcd);
-					Lcd_blink(lcd, 1, 1, 8, displayTime);
+					Lcd_blink(lcd, 1, 1, 8, &displayTime);
 					break;
 				case 1:
+					was_changed = 1;
 					key = Hour;
-					displayDate(lcd);
-					Lcd_blink(lcd, 1, 1, 2, displayTime);
+					Lcd_blink(lcd, 1, 1, 2, &displayTime);
 					break;
 				case 2:
 					key = Minute;
-					displayDate(lcd);
-					Lcd_blink(lcd, 1, 4, 2, displayTime);
+					Lcd_blink(lcd, 1, 4, 2, &displayTime);
 					break;
 				case 3:
 					key = Second;
-					displayDate(lcd);
-					Lcd_blink(lcd, 1, 7, 2, displayTime);
-					was_changed = 1;
+					Lcd_blink(lcd, 1, 7, 2, &displayTime);
 					break;
-				default:
-					if(was_changed == 1)
-					{
-						setAll(year, month, day, hour, minute, second);
-						was_changed = 0;
-					}
-					time_position = 0;
-					date_position = 0;
-					break;
+				default:time_position = 0;
 			}
+			displayDate();
 			break;
 	}
+	if(was_changed == 1)
+	{
+		setAll(year->currentValue, month->currentValue, day->currentValue, hour->currentValue, minute->currentValue, second->currentValue);
+	}
+
 }
 
-static void displayDate(Lcd_HandleTypeDef *lcd)
+static void displayDate()
 {
 	Lcd_cursor(lcd, 0, 1);
 	Lcd_displayDate(lcd,
-		year,
-		month,
-		day);
+			year->currentValue,
+			month->currentValue,
+			day->currentValue);
 
 }
 
-static void displayTime(Lcd_HandleTypeDef *lcd)
+static void displayTime()
 {
 	Lcd_cursor(lcd, 1, 1);
 	Lcd_displayDate(lcd,
-		hour,
-		minute,
-		second);
+			hour->currentValue,
+			minute->currentValue,
+			second->currentValue);
 }
 
-static void displayArrowUp(Lcd_HandleTypeDef *lcd)
+static void displayArrowUp()
 {
 	Lcd_cursor(lcd, 0, 0);
 	Lcd_string(lcd, "\x03");
 }
 
-static void displayArrowDown(Lcd_HandleTypeDef *lcd)
+static void displayArrowDown()
 {
 	Lcd_cursor(lcd, 1, 0);
 	Lcd_string(lcd, "\x04");

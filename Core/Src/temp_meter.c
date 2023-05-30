@@ -151,7 +151,7 @@ static void checkWhenAlarmTemperatureIsHigherThanTurnOffAlarm()
 	{
 		if (lastAlarmState == 1)
 		{
-			alarmsHistory[alarmsCounter - 1].alarmDuration = HAL_GetTick() - timer;
+			alarmsHistory[alarmsCounter - 1].alarmDuration = (HAL_GetTick() - timer) / 1000;
 		}
 
 		alarmState = 0;
@@ -177,7 +177,7 @@ static void checkWhenAlarmTemperatureIsLowerThanTurnOffAlarm()
 	{
 		if (lastAlarmState == 1)
 		{
-			alarmsHistory[alarmsCounter - 1].alarmDuration = HAL_GetTick() - timer;
+			alarmsHistory[alarmsCounter - 1].alarmDuration = (HAL_GetTick() - timer) / 1000;
 		}
 
 		alarmState = 0;

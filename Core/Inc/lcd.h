@@ -81,10 +81,6 @@ typedef struct {
 
 } Lcd_HandleTypeDef;
 
-
-typedef void (*DisplayFunction)(Lcd_HandleTypeDef*);
-
-
 /************************************** Public functions **************************************/
 void Lcd_init(Lcd_HandleTypeDef * lcd);
 void Lcd_float(Lcd_HandleTypeDef * lcd, float number);
@@ -97,6 +93,8 @@ Lcd_HandleTypeDef Lcd_create(
 		Lcd_PortType en_port, Lcd_PinType en_pin, Lcd_ModeTypeDef mode);
 void Lcd_define_char(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[]);
 void Lcd_clear(Lcd_HandleTypeDef * lcd);
-void Lcd_blink(Lcd_HandleTypeDef *lcd, uint8_t row, uint8_t col, uint32_t length, DisplayFunction display_var);
+void Lcd_blink(Lcd_HandleTypeDef *lcd, uint8_t row, uint8_t col, uint32_t length, void (*display_var)());
+void Lcd_enableBlink();
+void Lcd_disableBlink();
 
 #endif /* LCD_H_ */

@@ -67,6 +67,9 @@ static void handleDisplayStatusZero()
 	if (getLastScreenIndex() != Alarms_History_Screen ||
 			displayStatus != lastDisplayStatus)
 	{
+		Lcd_clear(lcd);
+		lastDisplayStatus = 0;
+
 		displayArrowUp();
 		displayArrowDown();
 
@@ -77,9 +80,6 @@ static void handleDisplayStatusZero()
 		setBtnRightFun(&incrementDisplayIndex);
 
 		setBtnMidFun(&changeActionStatus);
-
-		Lcd_clear(lcd);
-		lastDisplayStatus = 0;
 	}
 
 	displayCleanHistory();
@@ -92,6 +92,9 @@ static void handleDisplayStatusOne()
 	{
 		Lcd_clear(lcd);
 		lastDisplayStatus = 1;
+
+		displayArrowUp();
+		displayArrowDown();
 
 		setBtnUpFun(&decrementSelectedRow);
 		setBtnDownFun(&incrementSelectedRow);
@@ -112,6 +115,9 @@ static void handleDisplayStatusTwo()
 	{
 		Lcd_clear(lcd);
 		lastDisplayStatus = 2;
+
+		displayArrowUp();
+		displayArrowDown();
 
 		alarmsHistory = getTemperatureHistory();
 		historyIndex = getAlarmsCounter() - 1;
@@ -189,7 +195,7 @@ static void displayHistoryDetails()
 				alarmsHistory[historyIndex].alarmDate.minute,
 				alarmsHistory[historyIndex].alarmDate.second);
 		Lcd_cursor(lcd, 1, 1);
-		Lcd_int(lcd, alarmsHistory[historyIndex].alarmDuration / 1000);
+		Lcd_int(lcd, alarmsHistory[historyIndex].alarmDuration);
 		Lcd_string(lcd, "s");
 	}
 }
