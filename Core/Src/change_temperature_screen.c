@@ -21,6 +21,8 @@ static void downRowAction(void);
 static void incrementSelectedTemperatureValue(void);
 static void decrementSelectedTemperatureValue(void);
 
+static void blinkOnCursor();
+
 static int8_t alarmTemperature;
 static int8_t turnOff_alarmTemperature;
 static Lcd_HandleTypeDef *lcd;
@@ -47,6 +49,7 @@ void displayChangeTemperatureScreen()
 
 	displayAlarmTemperature();
 	displayTurnOffAlarmTemperature();
+//	blinkOnCursor();
 
 	if (actionStatus != lastActionStatus)
 	{
@@ -157,6 +160,7 @@ static void incrementSelectedTemperatureValue()
 			++turnOff_alarmTemperature;
 			break;
 	}
+	Lcd_disableBlink();
 }
 
 static void decrementSelectedTemperatureValue()
@@ -176,6 +180,23 @@ static void decrementSelectedTemperatureValue()
 				turnOff_alarmTemperature = 100;
 			}
 			--turnOff_alarmTemperature;
+			break;
+	}
+	Lcd_disableBlink();
+}
+
+static void blinkOnCursor()
+{
+	switch(cursorRow)
+	{
+		case 0:
+			Lcd_blink(lcd, 0, 1, 2, &displayAlarmTemperature);
+			displayTurnOffAlarmTemperature();
+			break;
+
+		case 1:
+			Lcd_blink(lcd, 1, 1, 2, &displayTurnOffAlarmTemperature);
+			displayAlarmTemperature();
 			break;
 	}
 }

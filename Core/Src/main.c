@@ -108,7 +108,6 @@ static void clearScreen()
 
 void incrementDisplayIndex()
 {
-	setIsUpdated(0);
 	Lcd_clear(&lcd);
 	if (screen_index == max_screen_index)
 	{
@@ -122,7 +121,6 @@ void incrementDisplayIndex()
 
 void decrementDisplayIndex()
 {
-	setIsUpdated(0);
 	Lcd_clear(&lcd);
 	if (screen_index == 0)
 	{
@@ -197,7 +195,7 @@ int main(void)
 
 	mainScreenInit(&lcd);
 	changeTemperatureScreenInit(&lcd);
-	ChangeDateTimeScreenInit(&lcd);
+	changeDateTimeScreenInit(&lcd);
 	historyScreenInit(&lcd);
 
 	setBtnUpFun(&doNothing);

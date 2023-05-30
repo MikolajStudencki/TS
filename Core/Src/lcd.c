@@ -87,7 +87,7 @@ void Lcd_float(Lcd_HandleTypeDef * lcd, float number)
 	Lcd_string(lcd, buffer);
 }
 
-void Lcd_blink(Lcd_HandleTypeDef *lcd, uint8_t row, uint8_t col, uint32_t length, DisplayFunction display_var)
+void Lcd_blink(Lcd_HandleTypeDef *lcd, uint8_t row, uint8_t col, uint32_t length, void (*display_var)())
 {
 	char emptyCharArray[length];
 	for (int i = 0; i < length; i++)
@@ -116,7 +116,7 @@ void Lcd_blink(Lcd_HandleTypeDef *lcd, uint8_t row, uint8_t col, uint32_t length
 				{
 					case 0:
 					{
-						display_var(lcd);
+						display_var();
 						start_time = end_time;
 						counter++;
 						break;
