@@ -1,9 +1,39 @@
 /*!
- *	\file mainscreen.c
- * 	\brief This file contains public enums and prototypes for buttons operations.
+ *	\file main_screen.c
+ * 	\brief This file contains public functions implementation, private prototypes, variables and
+ * 	functions implementation for displaying main screen.
  *
- *  Created 23/05/2023
- *  \author Mikołaj Haglauer
+ *  \author Sigma
+ */
+
+/*!
+ * 	\fn static void displayCurrentDate(void)
+ * 	\brief Function used to display current date.
+ */
+
+/*!
+ * 	\fn static void displayCurrentTime(void)
+ * 	\brief Function used to display current time.
+ */
+
+/*!
+ * 	\fn static void displayCurrentTemperature(void)
+ * 	\brief Function used to display current temperature.
+ */
+
+/*!
+ * 	\fn static void displayAlaramTemperature(void)
+ * 	\brief Function used to display alarm temperature.
+ */
+
+/*!
+ * 	\fn static void refreshTemperatureDisplayEverySecond(void)
+ * 	\brief Function used to refresh current temperature every second.
+ */
+
+/*!
+ * 	\fn static void displayAlarmsCounter(void)
+ * 	\brief Function used to display alarms counter.
  */
 
 #include "main_screen.h"
@@ -32,6 +62,10 @@ void mainScreenInit(Lcd_HandleTypeDef *lcd_var)
 
 void displayMainScreen()
 {
+	if (getLastScreenIndex() != Main_Screen)
+	{
+		setBtnMidFun(&doNothing);
+	}
 	displayCurrentTime();
 	displayCurrentDate();
 	refreshTemperatureDisplayEverySecond();

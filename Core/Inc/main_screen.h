@@ -1,9 +1,19 @@
 /*!
- *	\file mainscreen.h
- * 	\brief This file contains public enums and prototypes for buttons operations.
+ *	\file main_screen.h
+ * 	\brief This file contains public prototypes for displaying main screen.
  *
- *  Created 23/05/2023
- *  \author Mikołaj Haglauer
+ *  \author Sigma
+ */
+
+/*!
+ * 	\fn void mainScreenInit(Lcd_HandleTypeDef *lcd_var)
+ * 	\brief Function used to initialize private variables for managing main screen.
+ * 	\param *lcd_var Pointer to LCD display.
+ */
+
+/*!
+ * 	\fn void displayMainScreen(void)
+ * 	\brief Function used to display main screen.
  */
 
 #include "lcd.h"

@@ -1,8 +1,107 @@
+/*!
+ *	\file change_temperature_screen.c
+ * 	\brief This file contains public implementation of functions, private prototypes, variables
+ * 	and implementation of functions for displaying temperature screen.
+ *
+ *  \author Sigma
+ */
+
+/*!
+ * 	\fn static void handleActionStatusZero(void)
+ * 	\brief Function used to handle base status of screen display.
+ */
+
+/*!
+ * 	\fn static void handleActionStatusOne(void)
+ * 	\brief Function used to handle edit status of screen display.
+ */
+
+/*!
+ * 	\fn static void displayArrowUp(void)
+ * 	\brief Function used to display arrow up character.
+ */
+
+/*!
+ * 	\fn static void displayArrowDown(void)
+ * 	\brief Function used to display arrow down character.
+ */
+
+/*!
+ * 	\fn static void displayAlarmTemperature(void)
+ * 	\brief Function used to display alarm temperature.
+ */
+
+/*!
+ * 	\fn static void setLocalTemperatures(void)
+ * 	\brief Function used to set local temperatures.
+ */
+
+/*!
+ * 	\fn static void changeActionStatus(void)
+ * 	\brief Function used to change action status.
+ */
+
+/*!
+ * 	\fn static void upRowAction(void)
+ * 	\brief Function used to change display base on button up action.
+ */
+
+/*!
+ * 	\fn static void downRowAction(void)
+ * 	\brief Function used to change display base on button down action.
+ */
+
+/*!
+ * 	\fn static void incrementSelectedTemperatureValue(void)
+ * 	\brief Function used to increase local selected alarm/turn off alarm temperature by one.
+ */
+
+/*!
+ * 	\fn static void decrementSelectedTemperatureValue(void)
+ * 	\brief Function used to decrease local selected alarm/turn off alarm temperature by one.
+ */
+
+/*!
+ * 	\fn static void blinkOnCursor(void)
+ * 	\brief Function used to blink on selected row.
+ */
+
+/*!
+ * 	\var static Lcd_HandleTypeDef *lcd
+ * 	\brief Pointer to lcd display.
+ */
+
+/*!
+ * 	\var static int8_t alarmTemperature
+ * 	\brief Local value of temperature to turn on alarm.
+ */
+
+/*!
+ * 	\var static int8_t turnOff_alarmTemperature
+ * 	\brief Local value of temperature to turn off alarm.
+ */
+
+/*!
+ * 	\var static uint8_t cursorRow
+ * 	\brief Currently selected row.
+ */
+
+/*!
+ * 	\var static uint8_t actionStatus
+ * 	\brief Current action status.
+ */
+
+/*!
+ * 	\var static uint8_t lastActionStatus
+ * 	\brief Last action status.
+ */
+
 #include "change_temperature_screen.h"
 #include "temp_meter.h"
 #include "buttons.h"
 #include "screens_manager.h"
 
+/************************************** Private function prototypes **************************************/
 static void handleActionStatusZero(void);
 static void handleActionStatusOne(void);
 
@@ -22,17 +121,20 @@ static void downRowAction(void);
 static void incrementSelectedTemperatureValue(void);
 static void decrementSelectedTemperatureValue(void);
 
-static void blinkOnCursor();
+static void blinkOnCursor(void);
+
+/************************************** Private variables **************************************/
+static Lcd_HandleTypeDef *lcd;
 
 static int8_t alarmTemperature;
 static int8_t turnOff_alarmTemperature;
-static Lcd_HandleTypeDef *lcd;
 
 static uint8_t cursorRow = 0;
 
 static uint8_t actionStatus = 0;
 static uint8_t lastActionStatus = 0;
 
+/************************************** Public functions **************************************/
 void changeTemperatureScreenInit(Lcd_HandleTypeDef *lcd_var)
 {
 	lcd = lcd_var;
@@ -66,6 +168,7 @@ void displayChangeTemperatureScreen()
 	}
 }
 
+/************************************** Private functions **************************************/
 static void handleActionStatusZero()
 {
 	lastActionStatus = 0;
