@@ -1,9 +1,20 @@
 /*
- * lcd.h
+ * 	\file lcd.h
  *
  *  Created on: 10/06/2018
- *      Author: Olivier Van den Eede
+ *  \author Olivier Van den Eede
  */
+
+/*!
+ * 	\fn void Lcd_blink(Lcd_HandleTypeDef *lcd, uint8_t row, uint8_t col, uint32_t length, void (*display_var)())
+ *	\brief Function used to blink selected part of display.
+ *	\param *lcd Pointer to lcd display.
+ *	\param row Selected row of lcd display.
+ *	\param col Selected col of lcd display.
+ *	\param length Selected length of lcd display.
+ *	\paranm (*display_var)() Function displaying blinked part of lcd display.
+ */
+
 
 #ifndef LCD_H_
 #define LCD_H_
@@ -83,7 +94,6 @@ typedef struct {
 
 /************************************** Public functions **************************************/
 void Lcd_init(Lcd_HandleTypeDef * lcd);
-void Lcd_float(Lcd_HandleTypeDef * lcd, float number);
 void Lcd_int(Lcd_HandleTypeDef * lcd, int number);
 void Lcd_string(Lcd_HandleTypeDef * lcd, char * string);
 void Lcd_cursor(Lcd_HandleTypeDef * lcd, uint8_t row, uint8_t col);

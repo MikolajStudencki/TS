@@ -79,14 +79,6 @@ void Lcd_int(Lcd_HandleTypeDef * lcd, int number)
 	Lcd_string(lcd, buffer);
 }
 
-void Lcd_float(Lcd_HandleTypeDef * lcd, float number)
-{
-	char buffer[11];
-	sprintf(buffer, "%.2f", number);
-
-	Lcd_string(lcd, buffer);
-}
-
 void Lcd_blink(Lcd_HandleTypeDef *lcd, uint8_t row, uint8_t col, uint32_t length, void (*display_var)())
 {
 	char emptyCharArray[length];

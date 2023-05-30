@@ -2,11 +2,22 @@
  *	\file datetime.c
  * 	\brief This file contains private and public variables, prototypes, functions for date-time operations.
  *
- *	This file contains private set of prototypes, variables and functions and public implementation
- *	of prototypes from file 'datatime.h'.
- *
- *  Created 19/05/2023
- *  \author Mikołaj Haglauer
+ *  \author Sigma
+ */
+
+/*!
+ * 	\fn static void displayDateTimePart(Lcd_HandleTypeDef *lcd, uint16_t dt_var)
+ * 	\brief Function used to display part of date/time so it occupies no less than 2 places on screen.
+ */
+
+/*!
+ * 	\fn static void checkDateTime(dateTime *dt_var, dateTime *i_dt_var)
+ * 	\brief Function used to increase values of date/time based on passing seconds.
+ */
+
+/*!
+ *	\fn static void iterateDateTime(void)
+ *	\brief Function used to iterate seconds based on clocks.
  */
 
 /*!
@@ -54,27 +65,6 @@
 /*!
  *	\var static uint32_t start_time
  * 	\brief Value of started time of measure in cycleThroughSecond function.
- */
-
-/*!
- *	\fn static void displayDateTimePart(Lcd_HandleTypeDef *lcd, dateTime *dt_var)
- *	\brief Function used to display parts of the date.
- *	\param lcd Pointer to LCD display.
- *	\param dt_var Pointer to displayed dateTime variable.
- */
-
-/*!
- *	\fn static void checkDateTime(dateTime *dt_var, dateTime *i_dt_var)
- *  \brief Function used to check and increment parts of the dateTime.
- *	\param dt_var Pointer to checked value.
- *	\param i_dt_var Pointer to next in size dateTime variable incremented value.
- */
-
-/*!
- *	\fn static void iterateDateTime(void)
- *	\brief Function used to iterate through dateTime variables to correctly estimate and set date and time.
- *
- *	Needs cycleThroughSecond function to cycle through this method every time a second passes.
  */
 
 #include "datetime.h"
@@ -156,11 +146,6 @@ void Lcd_displayDate(Lcd_HandleTypeDef *lcd, uint16_t year_var, uint8_t month_va
 dateTime getDateTimeByKey(dateTimeKey key)
 {
 	return dateTimeMap[key];
-}
-
-void setDateTimeByKey(dateTimeKey key, uint16_t var)
-{
-	dateTimeMap[key].currentValue = var;
 }
 
 void setAll(uint16_t year_var, uint16_t month_var, uint16_t day_var, uint16_t hour_var, uint16_t minute_var, uint16_t second_var)

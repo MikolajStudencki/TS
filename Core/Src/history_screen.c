@@ -1,8 +1,147 @@
+/*!
+ *	\file history_screen.c
+ * 	\brief This file contains public functions implementation, private prototypes, variables and functions
+ * 	implementation for displaying history screen.
+ *
+ *  \author Sigma
+ */
+
+/*!
+ * 	\fn void handleDisplayStatusZero(void)
+ * 	\brief Function used to handle base status of screen display.
+ */
+
+/*!
+ * 	\fn void handleDisplayStatusOne(void)
+ * 	\brief Function used to handle clean history status of screen display.
+ */
+
+/*!
+ * 	\fn void handleDisplayStatusTwo(void)
+ * 	\brief Function used to handle read history details status of screen display.
+ */
+
+/*!
+ * 	\fn void displayArrowUp(void)
+ * 	\brief Function used to display arrow up character.
+ */
+
+/*!
+ * 	\fn void displayArrowDown(void)
+ * 	\brief Function used to display arrow down character.
+ */
+
+/*!
+ * 	\fn void displayCleanHistory(void)
+ * 	\brief Function used to display clean history screen.
+ */
+
+/*!
+ * 	\fn void displayCheckHistory(void)
+ * 	\brief Function used to display history details screen.
+ */
+
+/*!
+ * 	\fn void displayClean(void)
+ * 	\brief Function used to display "clean" row.
+ */
+
+/*!
+ * 	\fn void displayCancel(void)
+ * 	\brief Function used to display "cancel" row.
+ */
+
+/*!
+ * 	\fn void displayHistoryDetails(void)
+ * 	\brief Function used to display details of alarms.
+ */
+
+/*!
+ * 	\fn void decrementSelectedRow(void)
+ * 	\brief Function used to select row 0.
+ */
+
+/*!
+ * 	\fn void incrementSelectedRow(void)
+ * 	\brief Function used to select row 1.
+ */
+
+/*!
+ * 	\fn void decrementHistoryIndex(void)
+ * 	\brief Function used to look back through alarms details history.
+ */
+
+/*!
+ * 	\fn void incrementHistoryIndex(void)
+ * 	\brief Function used to look forward through alarms details history.
+ */
+
+/*!
+ * 	\fn void handleMainHistoryDisplay(void)
+ * 	\brief Function used to handle main history display.
+ */
+
+/*!
+ * 	\fn void handleClearHistoryDisplay(void)
+ * 	\brief Function used to handle clean history display.
+ */
+
+/*!
+ * 	\fn void backToMainHistoryScreen(void)
+ * 	\brief Function used to go back to main history screen.
+ */
+
+/*!
+ * 	\fn void handleDisplayStatusZeroBlinkOnCursor(void)
+ * 	\brief Function used to link selected row.
+ */
+
+/*!
+ * 	\fn void handleDisplayStatusOneBlinkOnCursor(void)
+ * 	\brief Function used to link selected row.
+ */
+
+/*!
+ * 	\var static Lcd_HandleTypeDef *lcd
+ * 	\brief Pointer to lcd display.
+ */
+
+/*!
+ * 	\var static uint8_t displayStatus
+ * 	\brief Current display status.
+ */
+
+/*!
+ * 	\var static uint8_t lastDisplayStatus
+ * 	\brief Last display status.
+ */
+
+/*!
+ * 	\var static uint8_t selectedRow
+ * 	\brief Currently selected row.
+ */
+
+/*!
+ * 	\var static uint8_t historyIndex
+ * 	\brief Currently selected index of alarm history details.
+ */
+
+/*!
+ * 	\var static uint8_t maxHistoryIndex
+ * 	\brief Max value of history index.
+ */
+
+/*!
+ * 	\var static temperatureHistory *alarmsHistory
+ * 	\brief Dynamic array of alarms details history.
+ */
+
 #include "history_screen.h"
 #include "temp_meter.h"
 #include "buttons.h"
 #include "screens_manager.h"
 
+/************************************** Private function prototypes **************************************/
 static void handleDisplayStatusZero(void);
 static void handleDisplayStatusOne(void);
 static void handleDisplayStatusTwo(void);
@@ -34,6 +173,7 @@ static void backToMainHistoryScreen(void);
 static void handleDisplayStatusZeroBlinkOnCursor(void);
 static void handleDisplayStatusOneBlinkOnCursor(void);
 
+/************************************** Private function prototypes **************************************/
 static Lcd_HandleTypeDef *lcd;
 
 static uint8_t displayStatus = 0;
@@ -45,6 +185,7 @@ static uint8_t historyIndex = 0;
 static uint8_t maxHistoryIndex = 0;
 static temperatureHistory *alarmsHistory;
 
+/************************************** Public functions **************************************/
 void historyScreenInit(Lcd_HandleTypeDef *lcd_var)
 {
 	lcd = lcd_var;
@@ -66,6 +207,7 @@ void displayHistoryScreen()
 	}
 }
 
+/************************************** Private functions **************************************/
 static void handleDisplayStatusZero()
 {
 	if (getLastScreenIndex() != Alarms_History_Screen ||

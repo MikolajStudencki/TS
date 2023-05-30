@@ -1,3 +1,115 @@
+/*!
+ *	\file temp_meter.c
+ * 	\brief This file contains public functions implementation, private prototypes, variables and functions implementation for measuring temperature.
+ *
+ *  \author Sigma
+ */
+
+/*!
+ *	\fn static void readTemperatureSensorVoltage(void)
+ *	\brief Function used to read value of adc and translate it to voltage.
+ */
+
+/*!
+ *	\fn static void checkAlarmState(void)
+ *	\brief Function used to check current alarm state.
+ */
+
+/*!
+ *	\fn static void addStateToHistory(void)
+ *	\brief Function used to add new history details to history array.
+ */
+
+/*!
+ *	\fn static void checkWhenAlarmTemperatureIsHigherThanTurnOffAlarm(void)
+ *	\brief Function used to check alarm state for alarm temperature higher than turn off temperature.
+ */
+
+/*!
+ *	\fn static void checkWhenAlarmTemperatureIsLowerThanTurnOffAlarm(void)
+ *	\brief Function used to check alarm state for alarm temperature lower than turn off temperature.
+ */
+
+/*!
+ *	\var static const uint16_t adc_range
+ *	\brief Constant variable for adc range.
+ */
+
+/*!
+ *	\var static const float adc_v_ref
+ *	\brief Constant variable for adc reference voltage.
+ */
+
+/*!
+ *	\var static float adc_value
+ *	\brief Value of adc read.
+ */
+
+/*!
+ *	\var static float adc_voltage
+ *	\brief Value of translated adc voltage from adc value.
+ */
+
+/*!
+ *	\var static int8_t temperature
+ *	\brief Value of current temperature.
+ */
+
+/*!
+ *	\var static int8_t alarmTemperature
+ *	\brief Value of alarm temperature.
+ */
+
+/*!
+ *	\var static int8_t alarmTemperature
+ *	\brief Value of turn off temperature temperature.
+ */
+
+/*!
+ *	\var static uint32_t end_time
+ *	\brief Value of time used to measure 1 second.
+ */
+
+/*!
+ *	\var static uint32_t start_time
+ *	\brief Value of time used to measure 1 second.
+ */
+
+/*!
+ *	\var static uint8_t alarmState
+ *	\brief Value of current alarm state.
+ */
+
+/*!
+ *	\var static uint8_t lastAlarmState
+ *	\brief Value of last alarm state.
+ */
+
+/*!
+ *	\var static uint16_t alarmsCounter
+ *	\brief Value of alarms counted.
+ */
+
+/*!
+ *	\var static temperatureHistory *alarmsHistory
+ *	\brief Array containing details for alarms history.
+ */
+
+/*!
+ *	\var static uint32_t timer
+ *	\brief Timer counting how many seconds did alarm continue.
+ */
+
+/*!
+ *	\var static Lcd_HandleTypeDef *lcd
+ *	\brief Pointer to lcd display.
+ */
+
+/*!
+ *	\var static ADC_HandleTypeDef *hadc1
+ *	\brief Pointer to adc.
+ */
+
 #include "temp_meter.h"
 #include "stdlib.h"
 

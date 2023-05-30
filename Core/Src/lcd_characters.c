@@ -1,3 +1,10 @@
+/*!
+ *	\file lcd_characters.c
+ * 	\brief This file contains implementation of external variables for lcd characters.
+ *
+ *  \author Sigma
+ */
+
 #include "lcd_characters.h"
 
 uint8_t celsiusChar[] = {
