@@ -11,6 +11,8 @@ const uint8_t ROW_20[] = {0x00, 0x40, 0x14, 0x54};
 static uint32_t end_time;
 static uint32_t start_time;
 static uint8_t counter = 0;
+static uint8_t blink_state = 1;
+
 /************************************** Static declarations **************************************/
 
 static void lcd_write_data(Lcd_HandleTypeDef * lcd, uint8_t data);
@@ -88,39 +90,63 @@ void Lcd_float(Lcd_HandleTypeDef * lcd, float number)
 void Lcd_blink(Lcd_HandleTypeDef *lcd, uint8_t row, uint8_t col, uint32_t length, DisplayFunction display_var)
 {
 	char emptyCharArray[length];
-	end_time = HAL_GetTick();
-
 	for (int i = 0; i < length; i++)
 	{
 		emptyCharArray[i] = ' ';
 	}
 	emptyCharArray[length] = '\0';
 
-	if(end_time - start_time >= 1000)
+	end_time = HAL_GetTick();
+
+	switch(blink_state)
 	{
-		switch(counter)
-		{
-			case 0:
+		case 0:
+			display_var(lcd);
+			if(end_time - start_time >= 50)
 			{
-				display_var(lcd);
+				Lcd_enableBlink();
 				start_time = end_time;
-				counter++;
-				break;
 			}
-			case 3:
+			break;
+
+		case 1:
+			if(end_time - start_time >= 1000)
 			{
-				counter = 0;
-				break;
+				switch(counter)
+				{
+					case 0:
+					{
+						display_var(lcd);
+						start_time = end_time;
+						counter++;
+						break;
+					}
+					case 3:
+					{
+						counter = 0;
+						break;
+					}
+					default:
+					{
+						Lcd_cursor(lcd, row, col);
+						Lcd_string(lcd, emptyCharArray);
+						counter++;
+						break;
+					}
+				}
 			}
-			default:
-			{
-				Lcd_cursor(lcd, row, col);
-				Lcd_string(lcd, emptyCharArray);
-				counter++;
-				break;
-			}
-		}
+			break;
 	}
+}
+
+void Lcd_enableBlink()
+{
+	blink_state = 1;
+}
+
+void Lcd_disableBlink()
+{
+	blink_state = 0;
 }
 
 /**

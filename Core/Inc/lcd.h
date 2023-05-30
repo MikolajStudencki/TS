@@ -98,5 +98,7 @@ Lcd_HandleTypeDef Lcd_create(
 void Lcd_define_char(Lcd_HandleTypeDef * lcd, uint8_t code, uint8_t bitmap[]);
 void Lcd_clear(Lcd_HandleTypeDef * lcd);
 void Lcd_blink(Lcd_HandleTypeDef *lcd, uint8_t row, uint8_t col, uint32_t length, DisplayFunction display_var);
+void Lcd_enableBlink();
+void Lcd_disableBlink();
 
 #endif /* LCD_H_ */

@@ -6,3 +6,5 @@
 #include "buttons.h"
 
 void displayChangeDateTimeScreen(Lcd_HandleTypeDef *lcd);
+uint8_t getIsUpdated();
+void setIsUpdated(uint8_t is_updated_var);

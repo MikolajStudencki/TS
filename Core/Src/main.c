@@ -96,6 +96,7 @@ void doNothing(void);
 /* USER CODE BEGIN 0 */
 void incrementDisplayIndex()
 {
+	setIsUpdated(0);
 	Lcd_clear(&lcd);
 	if (screen_index == max_screen_index)
 	{
@@ -109,6 +110,7 @@ void incrementDisplayIndex()
 
 void decrementDisplayIndex()
 {
+	setIsUpdated(0);
 	Lcd_clear(&lcd);
 	if (screen_index == 0)
 	{
